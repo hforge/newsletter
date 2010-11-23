@@ -1,0 +1,212 @@
+#: ../ui/mailing/MailingLetter_view.xml.en:22
+msgctxt "div"
+msgid "${data}"
+msgstr ""
+
+#: ../ui/mailing/MailingLetter_view.xml.en:30
+msgctxt "pre"
+msgid "${text}"
+msgstr ""
+
+#: ../ui/mailing/MailingLetter_view.xml.en:10
+msgctxt "b"
+msgid ""
+"<g id='1'>Subject: </g> ${subject}<x id='2'/>  <g id='3'>  <g id='4'>State:</"
+"g>"
+msgstr ""
+
+#: ../ui/mailing/MailingLetter_view.xml.en:12
+msgctxt "b"
+msgid "Already send </g>  <g id='5'>  <g id='6'>State:</g>"
+msgstr ""
+
+#: ../mailing_views.py:94
+msgid "Click to send"
+msgstr ""
+
+#: ../mailing_views.py:36
+msgid "Configure"
+msgstr ""
+
+#: ../mailing_views.py:70
+msgid "Date"
+msgstr ""
+
+#: ../mailing.py:87
+msgid "Default model"
+msgstr ""
+
+#: ../users.py:43
+msgid "E-Mail Address"
+msgstr ""
+
+#: ../mailing.py:38
+msgid "E-Mailing"
+msgstr ""
+
+#: ../mailing_views.py:39
+msgid "Email sender"
+msgstr ""
+
+#: ../ui/mailing/MailingLetter_view.xml.en:19
+msgctxt "heading"
+msgid "Html Version"
+msgstr ""
+
+#: ../mailing_views.py:125
+msgid "Inscription ok"
+msgstr ""
+
+#: ../letter.py:63
+msgid "Mailing Letter"
+msgstr ""
+
+#: ../models.py:54
+msgid "Mailing Model"
+msgstr ""
+
+#: ../models.py:37
+msgid "Mailing Models"
+msgstr ""
+
+#: ../users.py:38
+msgid "Mailing Users"
+msgstr ""
+
+#: ../mailing.py:57
+msgid "Models"
+msgstr ""
+
+#: ../mailing.py:88
+msgid "Modle par dfaut"
+msgstr ""
+
+#: ../mailing.py:83
+msgid "Modles de newsletter"
+msgstr ""
+
+#: ../mailing_views.py:68
+msgid "Name"
+msgstr ""
+
+#: ../letter_views.py:48
+msgid "New letter"
+msgstr ""
+
+#: ../mailing.py:82
+msgid "Newsletter Models"
+msgstr ""
+
+#: ../ui/mailing/MailingLetter_view.xml.en:15
+msgctxt "b"
+msgid ""
+"Not send </g>  <x id='7'/>  <g id='8'>Number of Emails: </g> ${nb_users}"
+msgstr ""
+
+#: ../letter_views.py:52
+msgid "Please choose a newsletter model"
+msgstr ""
+
+#: ../mailing_views.py:104
+msgid "Register"
+msgstr ""
+
+#: ../mailing.py:77
+msgid "Registered users"
+msgstr ""
+
+#: ../letter.py:64
+msgid "Send a newsletter to your customers or visitors ..."
+msgstr ""
+
+#: ../letter_views.py:98
+msgid "Send to %s E-Mails (Currently %s E-mails in Database)"
+msgstr ""
+
+#: ../mailing_views.py:71
+msgid "State"
+msgstr ""
+
+#: ../letter.py:107
+msgid "Text Version"
+msgstr ""
+
+#: ../ui/mailing/MailingLetter_view.xml.en:29
+msgctxt "heading"
+msgid "Text Version"
+msgstr ""
+
+#: ../mailing_views.py:144
+msgid "The E-mail address not exist"
+msgstr ""
+
+#: ../models_views.py:40
+msgid "There are ${n} models"
+msgstr ""
+
+#: ../mailing_views.py:76
+msgid "There are ${n} newsletters"
+msgstr ""
+
+#: ../letter_views.py:102
+msgid "There are %s E-Mails in Database"
+msgstr ""
+
+#: ../models_views.py:39
+msgid "There is 1 one model"
+msgstr ""
+
+#: ../mailing_views.py:75
+msgid "There is 1 one newsletter"
+msgstr ""
+
+#: ../mailing_views.py:69 ../models_views.py:36
+msgid "Title"
+msgstr ""
+
+#: ../mailing_views.py:142
+msgid "Unregistration ok"
+msgstr ""
+
+#: ../mailing_views.py:134
+msgid "Unsubscribe"
+msgstr ""
+
+#: ../mailing_views.py:121
+msgid "User already exist"
+msgstr ""
+
+#: ../users.py:44
+msgid "User exist"
+msgstr ""
+
+#: ../mailing.py:55
+msgid "Users"
+msgstr ""
+
+#: ../mailing.py:78
+msgid "Utilisateurs enregistrs"
+msgstr ""
+
+#: ../models_views.py:30 ../mailing_views.py:62 ../models.py:59
+#: ../letter_views.py:92
+msgid "View"
+msgstr ""
+
+#: ../letter.py:93
+msgid ""
+"You can read our newsletter here:\n"
+"%s\n"
+"\n"
+"To unsubscribe click here: \n"
+" %s\n"
+msgstr ""
+
+#: ../mailing_views.py:107
+msgid "Your E-mail address"
+msgstr ""
+
+#: ../ui/mailing/MailingLetter_view.xml.en:8
+msgctxt "heading"
+msgid "Your newsletter"
+msgstr ""
