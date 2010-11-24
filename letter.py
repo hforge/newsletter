@@ -23,8 +23,9 @@ from ikaaro.registry import register_resource_class
 
 
 class MailingLetter(Folder):
-    class_id = "neswletter"
-    class_title = MSG(u"Newsletter")
+
+    class_id = 'mailing-letter'
+    class_title = MSG(u'Mailing Letter')
     class_description = MSG(u'Send a newsletter to your customers or '
                             u'visitors ...')
 

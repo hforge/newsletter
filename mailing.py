@@ -15,10 +15,36 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # Import from itools
-from itools.core import get_version
+from itools.gettext import MSG
 
-# To register
-import mailing
+# import from ikaaro
+from ikaaro.folder import Folder
+from ikaaro.registry import register_document_type
 
-# Automatic version management
-__version__ = get_version()
+# Import from Newsletter
+from letter import MailingLetter
+
+
+class Mailing(Folder):
+
+    class_id = 'mailing'
+    class_title = MSG(u'E-Mailing')
+    class_description = MSG(u'Manage Newsletters')
+    class_icon16 = 'icons/16x16/mail.png'
+    class_icon48 = 'icons/48x48/mail.png'
+
+    #class_views = [
+    #               #'register', 'unregister',
+    #               'view',
+    #               'configure',
+    #               'users',
+    #               'models']
+
+
+    def get_document_types(self):
+        return [MailingLetter]
+
+
+
+# Register
+register_document_type(Mailing)
