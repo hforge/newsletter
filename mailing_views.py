@@ -18,37 +18,28 @@
 from itools.gettext import MSG
 
 # import from ikaaro
-from ikaaro.folder import Folder
-from ikaaro.registry import register_document_type
-
-# Import from Newsletter
-from mailing_views import MailingView
-from letter import MailingLetter
+from ikaaro.folder_views import Folder_BrowseContent
+from ikaaro.views import ContextMenu
 
 
 
-class Mailing(Folder):
+class MailingMenu(ContextMenu):
 
-    class_id = 'mailing'
-    class_title = MSG(u'E-Mailing')
-    class_description = MSG(u'Manage Newsletters')
-    class_icon16 = 'icons/16x16/mail.png'
-    class_icon48 = 'icons/48x48/mail.png'
+    title = MSG(u'Menu')
 
-    class_views = ['view']
-    #               #'register', 'unregister',
-    #               'view',
-    #               'configure',
-    #               'users',
-    #               'models']
-
-    view = MailingView()
-
-
-    def get_document_types(self):
-        return [MailingLetter]
+    def get_items(self):
+        # XXX
+        path = self.context.get_link(self.resource.parent)
+        return [ {'title': MSG(u'Create a new newsletter'),
+                  'href': '%s/;search' % path} ]
 
 
 
-# Register
-register_document_type(Mailing)
+class MailingView(Folder_BrowseContent):
+
+    access = 'is_admin'
+    title = MSG(u'View')
+
+    context_menus = [MailingMenu()]
+
+
