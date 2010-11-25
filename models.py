@@ -18,28 +18,45 @@
 from itools.gettext import MSG
 
 # import from ikaaro
-from ikaaro.folder_views import Folder_BrowseContent
-from ikaaro.views import ContextMenu
+from ikaaro.file import File
+from ikaaro.folder import Folder
+from ikaaro.registry import register_resource_class
 
 
 
-class MailingMenu(ContextMenu):
+class Models(Folder):
 
-    title = MSG(u'Menu')
+    class_id = 'mailing-models'
+    class_title = MSG(u'Mailing Models')
 
-    def get_items(self):
-        # XXX
-        path = self.context.get_link(self.resource.parent)
-        return [ {'title': MSG(u'Create a newsletter'),
-                  'href': '%s/;search' % path} ]
+    # XXX
+    #class_views = ['view', 'new_resource']
+    __fixed_handlers__ = ['default_model']
+
+    # XXX Views
+    #view = ModelsView()
+
+    def get_document_types(self):
+        return [Model]
 
 
 
-class MailingView(Folder_BrowseContent):
 
-    access = 'is_admin'
-    title = MSG(u'View')
+class Model(Folder):
 
-    context_menus = [MailingMenu()]
+    class_id = 'mailing-model'
+    class_title = MSG(u'Mailing Model')
+
+    class_views = ['view', 'new_resource', 'browse_content']
+
+
+    def get_document_types(self):
+        return [File]
+
+
+
+# Register
+register_resource_class(Model)
+register_resource_class(Models)
 
 
