@@ -15,11 +15,27 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # Import from itools
+from itools.core import merge_dicts
+from itools.datatypes import Email
 from itools.gettext import MSG
 
 # import from ikaaro
 from ikaaro.folder_views import Folder_BrowseContent
 from ikaaro.views import ContextMenu
+from ikaaro.resource_views import DBResource_Edit
+from ikaaro.autoform import TextWidget
+
+
+
+class MailingEdit(DBResource_Edit):
+
+    access = 'is_admin'
+    title = MSG(u'Configure')
+
+    schema = merge_dicts(DBResource_Edit.schema,
+                         sender=Email(source='metadata', mandatory=True))
+    widgets = DBResource_Edit.widgets + [TextWidget('sender',
+                                         title=MSG(u"Default sender's Email"))]
 
 
 

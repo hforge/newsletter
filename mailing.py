@@ -15,6 +15,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # Import from itools
+from itools.core import merge_dicts
+from itools.datatypes import Email
 from itools.gettext import MSG
 
 # import from ikaaro
@@ -22,8 +24,8 @@ from ikaaro.folder import Folder
 from ikaaro.registry import register_document_type
 
 # Import from Newsletter
-from mailing_views import MailingView
 from letter import MailingLetter
+from mailing_views import MailingView, MailingEdit
 from models import Models
 
 
@@ -35,15 +37,16 @@ class Mailing(Folder):
     class_description = MSG(u'Manage Newsletters')
     class_icon16 = 'icons/16x16/mail.png'
     class_icon48 = 'icons/48x48/mail.png'
+    class_schema = merge_dicts(Folder.class_schema,
+                               sender=Email(source='metadata'))
 
-    class_views = ['view']
+    class_views = ['view', 'edit']
     # XXX
     #               #'register', 'unregister',
-    #               'view',
-    #               'configure',
     #               'users',
     #               'models']
     view = MailingView()
+    edit = MailingEdit()
 
 
     def init_resource(self, **kw):
