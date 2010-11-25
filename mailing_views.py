@@ -35,7 +35,7 @@ class MailingEdit(DBResource_Edit):
     schema = merge_dicts(DBResource_Edit.schema,
                          sender=Email(source='metadata', mandatory=True))
     widgets = DBResource_Edit.widgets + [TextWidget('sender',
-                                         title=MSG(u"Default sender's Email"))]
+                                         title=MSG(u"Sender's Email"))]
 
 
 

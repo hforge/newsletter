@@ -16,10 +16,11 @@
 
 # Import from itools
 from itools.core import merge_dicts
-from itools.datatypes import Email
+from itools.datatypes import Email, Tokens
 from itools.gettext import MSG
 
 # import from ikaaro
+from ikaaro.cc import Observable
 from ikaaro.folder import Folder
 from ikaaro.registry import register_document_type
 
@@ -30,7 +31,7 @@ from models import Models
 
 
 
-class Mailing(Folder):
+class Mailing(Folder, Observable):
 
     class_id = 'mailing'
     class_title = MSG(u'E-Mailing')
@@ -38,12 +39,11 @@ class Mailing(Folder):
     class_icon16 = 'icons/16x16/mail.png'
     class_icon48 = 'icons/48x48/mail.png'
     class_schema = merge_dicts(Folder.class_schema,
-                               sender=Email(source='metadata'))
+                               sender=Email(source='metadata'),
+                               cc_list=Tokens(source='metadata'))
 
-    class_views = ['view', 'edit']
+    class_views = ['view', 'edit', 'subscribe']
     # XXX
-    #               #'register', 'unregister',
-    #               'users',
     #               'models']
     view = MailingView()
     edit = MailingEdit()
@@ -52,10 +52,6 @@ class Mailing(Folder):
     def init_resource(self, **kw):
         Folder.init_resource(self, **kw)
 
-        # XXX Users
-        #kw = {'title': {'en': u"Registered users",
-        #                'fr': u'Utilisateurs enregistrés'}}
-        #MailingUsers._make_resource(MailingUsers, folder, '%s/users' % name, **kw)
         # Models
         kw = {'title': {'en': u'Newsletter Models',
                         'fr': u'Modèles de newsletter'}}
