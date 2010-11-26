@@ -44,10 +44,9 @@ class MailingMenu(ContextMenu):
     title = MSG(u'Menu')
 
     def get_items(self):
-        # XXX
-        path = self.context.get_link(self.resource.parent)
+        path = self.context.get_link(self.resource)
         return [ {'title': MSG(u'Create a newsletter'),
-                  'href': '%s/;search' % path} ]
+                  'href': '%s/;new_resource?type=mailing-letter' % path} ]
 
 
 

@@ -29,6 +29,14 @@ class MailingLetter(Folder):
     class_description = MSG(u'Send a newsletter to your customers or '
                             u'visitors ...')
 
+    class_views = [ 'browse_content' ]
+    #               'view',
+    #               'edit_html', 'edit_text',
+    #               'browse_content?mode=list',
+    #               'new_resource_form',
+    #               'send',
+    #               'view_stats']
+
 
 
 # Register
