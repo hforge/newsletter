@@ -18,33 +18,24 @@
 from itools.gettext import MSG
 
 # import from ikaaro
+from ikaaro.file import File
 from ikaaro.folder import Folder
 from ikaaro.registry import register_resource_class
 
-# Import from Newsletter
-from model import Model
-from models_views import ModelsView
 
 
+class Model(Folder):
 
-class Models(Folder):
+    class_id = 'mailing-model'
+    class_title = MSG(u'Mailing Model')
 
-    class_id = 'mailing-models'
-    class_title = MSG(u'Mailing Models')
+    class_views = ['view', 'new_resource', 'browse_content']
 
-    # XXX
-    #class_views = ['view', 'new_resource']
-    #__fixed_handlers__ = ['default_model']
-
-    # Views
-    view = ModelsView()
 
     def get_document_types(self):
-        return [Model]
+        return [File]
 
 
 
 # Register
-register_resource_class(Models)
-
-
+register_resource_class(Model)
