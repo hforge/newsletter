@@ -23,6 +23,7 @@ from itools.gettext import MSG
 from ikaaro.cc import Observable
 from ikaaro.folder import Folder
 from ikaaro.registry import register_document_type
+from ikaaro.folder_views import GoToSpecificDocument
 
 # Import from Newsletter
 from letter import MailingLetter
@@ -42,11 +43,13 @@ class Mailing(Folder, Observable):
                                sender=Email(source='metadata'),
                                cc_list=Tokens(source='metadata'))
 
-    class_views = ['view', 'edit', 'subscribe']
-    # XXX
-    #               'models']
+    class_views = ['view', 'edit', 'subscribe', 'models']
+
     view = MailingView()
     edit = MailingEdit()
+    models = GoToSpecificDocument(specific_document='models',
+                                  title=MSG(u'Models'),
+                                  access='is_allowed_to_edit')
 
 
     def init_resource(self, **kw):
