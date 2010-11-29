@@ -21,6 +21,10 @@ from itools.gettext import MSG
 from ikaaro.folder import Folder
 from ikaaro.registry import register_resource_class
 
+# Import from Newsletter
+from letter_views import MailingLetterNewInstance
+
+
 
 class MailingLetter(Folder):
 
@@ -33,10 +37,10 @@ class MailingLetter(Folder):
     #               'view',
     #               'edit_html', 'edit_text',
     #               'browse_content?mode=list',
-    #               'new_resource_form',
     #               'send',
     #               'view_stats']
 
+    new_instance = MailingLetterNewInstance()
 
 
 # Register
