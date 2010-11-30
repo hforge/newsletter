@@ -16,13 +16,15 @@
 
 # Import from itools
 from itools.gettext import MSG
+from itools.core import merge_dicts
+from itools.datatypes import Boolean, Integer, Email
 
 # import from ikaaro
 from ikaaro.folder import Folder
 from ikaaro.registry import register_resource_class
 
 # Import from Newsletter
-from letter_views import MailingLetterNewInstance
+from letter_views import MailingLetterNewInstance, MailingLetterView
 
 
 
@@ -32,15 +34,20 @@ class MailingLetter(Folder):
     class_title = MSG(u'Mailing Letter')
     class_description = MSG(u'Send a newsletter to your customers or '
                             u'visitors ...')
+    class_schema = merge_dicts(Folder.class_schema,
+                               is_send=Boolean(source='metadata'),
+                               number=Integer(source='metadata'),
+                               email=Email(source='metadata'))
 
-    class_views = [ 'browse_content' ]
-    #               'view',
+    class_views = [ 'view' ]
     #               'edit_html', 'edit_text',
     #               'browse_content?mode=list',
     #               'send',
     #               'view_stats']
 
     new_instance = MailingLetterNewInstance()
+    view = MailingLetterView()
+
 
 
 # Register

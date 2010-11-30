@@ -15,10 +15,19 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # Import from itools
-from itools.core import get_version
+from itools.core import  get_abspath, get_version
+
+# Import from ikaaro
+from ikaaro.skins import register_skin
 
 # To register
 import mailing
 
+
+
 # Automatic version management
 __version__ = get_version()
+
+
+# Register the skin
+register_skin('mailing', get_abspath('ui/mailing'))

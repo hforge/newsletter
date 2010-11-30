@@ -19,6 +19,7 @@ from itools.core import merge_dicts
 from itools.datatypes import Enumerate
 from itools.gettext import MSG
 from itools.csv import Property
+from itools.web import STLForm
 
 # Import from ikaaro
 from ikaaro.autoform import SelectWidget
@@ -76,3 +77,42 @@ class MailingLetterNewInstance(NewInstance):
         # Ok
         goto = './%s/' % name
         return context.come_back(messages.MSG_NEW_RESOURCE, goto=goto)
+
+
+
+class MailingLetterView(STLForm):
+
+    template = '/ui/mailing/MailingLetter_view.xml'
+    access = 'is_allowed_to_add'
+    title = MSG(u'View')
+
+    def get_namespace(self, resource, context):
+
+        # Create namespace
+        number = resource.get_property('number')
+        if number:
+            nb_users = u'Send to %s E-Mails' % number
+        else:
+            # XXX
+            #users = resource.parent.get_resource('users').handler
+            #nb_users = u'There are %s E-Mails in Database' % users.get_n_records()
+            nb_users =  u'There are [TODO] E-Mails in Database'
+
+        namespace = {'text': 'TODO', #resource.get_resource('index_txt').handler.to_str(),
+                     'is_send': resource.get_property('is_send'),
+                     'nb_users': MSG(nb_users),
+                     'data': 'TODO', #resource.get_resource('index').get_html_data(),
+                     'subject': resource.get_title()}
+        return namespace
+
+
+    def action(self, resource, context, form):
+        if resource.get_property('is_send') is True:
+            context.message = MSG(u'Newsletter already send !')
+            return
+        sender = resource.get_property('sender')
+        if not sender:
+            context.message = MSG(u'Please configure the sender !')
+        resource.send(context)
+        msg = MSG(u'Newsletter sended !')
+        return context.come_back(msg, goto='../')
