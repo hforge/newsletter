@@ -83,7 +83,7 @@ class MailingLetterView(STLForm):
 
     def get_namespace(self, resource, context):
 
-        # Create namespace
+        # nb_users
         number = resource.get_property('number')
         if number:
             nb_users = u'Send to %s E-Mails' % number
@@ -93,12 +93,15 @@ class MailingLetterView(STLForm):
             #nb_users = u'There are %s E-Mails in Database' % users.get_n_records()
             nb_users =  u'There are [TODO] E-Mails in Database'
 
-        namespace = {'text': 'TODO', #resource.get_resource('index_txt').handler.to_str(),
-                     'is_send': resource.get_property('is_send'),
-                     'nb_users': MSG(nb_users),
-                     'data': 'TODO', #resource.get_resource('index').get_html_data(),
-                     'subject': resource.get_title()}
-        return namespace
+        # The data XXX handle the language
+        html_data = resource.get_resource('html_body').get_html_data()
+        txt_data = resource.get_resource('txt_body').to_text()
+
+        return {'subject': resource.get_title(),
+                'is_send': resource.get_property('is_send'),
+                'nb_users': MSG(nb_users),
+                'html_data': html_data,
+                'txt_data': txt_data}
 
 
     def action(self, resource, context, form):

@@ -5,7 +5,7 @@
            xmlns:stl="http://www.hforge.org/xml-namespaces/stl">
 
   <h2>
-    Your newsletter
+    Informations
   </h2>
   <b>Subject: </b> ${subject}<br/>
   <stl:inline stl:if="is_send">
@@ -24,10 +24,11 @@
   <h2>HTML Version</h2>
   <div>
     <div class="clear"/>
-    ${data}
+    ${html_data}
     <div class="clear"/>
   </div>
+
   <h2>Text Version</h2>
-  <pre>${text}</pre>
+  <pre>${txt_data}</pre>
 
 </stl:block>

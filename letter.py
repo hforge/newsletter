@@ -72,7 +72,5 @@ class MailingLetter(Folder):
 
 
 
-
-
 # Register
 register_resource_class(MailingLetter)
