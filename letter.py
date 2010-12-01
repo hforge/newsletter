@@ -17,11 +17,13 @@
 # Import from itools
 from itools.gettext import MSG
 from itools.core import merge_dicts
-from itools.datatypes import Boolean, Integer, Email
+from itools.datatypes import Boolean, Integer, Email, String
 
 # import from ikaaro
 from ikaaro.folder import Folder
 from ikaaro.registry import register_resource_class
+from ikaaro.webpage import WebPage
+from ikaaro.text import Text
 
 # Import from Newsletter
 from letter_views import MailingLetterNewInstance, MailingLetterView
@@ -35,11 +37,12 @@ class MailingLetter(Folder):
     class_description = MSG(u'Send a newsletter to your customers or '
                             u'visitors ...')
     class_schema = merge_dicts(Folder.class_schema,
+                               model=String(source='metadata'),
                                is_send=Boolean(source='metadata'),
                                number=Integer(source='metadata'),
                                email=Email(source='metadata'))
 
-    class_views = [ 'view' ]
+    class_views = ['view']
     #               'edit_html', 'edit_text',
     #               'browse_content?mode=list',
     #               'send',
@@ -47,6 +50,27 @@ class MailingLetter(Folder):
 
     new_instance = MailingLetterNewInstance()
     view = MailingLetterView()
+
+
+    def init_resource(self, **kw):
+        Folder.init_resource(self, **kw)
+
+        model = kw['model']
+        # A model is used ?
+        if model:
+            pass
+            # XXX We have to save model
+            #model = resource.get_resource('models/%s/' % form['model'])
+            #for model_resource in model.get_resources():
+            #    path = child.get_pathto(model_resource)
+            #    child.copy_resource(path, model_resource.name)
+        else:
+            # HTML Version
+            self.make_resource('html_body', WebPage)
+            # TXT Version
+            self.make_resource('txt_body', Text)
+
+
 
 
 

@@ -57,22 +57,17 @@ class MailingLetterNewInstance(NewInstance):
     def action(self, resource, context, form):
         name = form['name']
         title = form['title']
+        model = form['model']
 
         # Create the resource
         class_id = context.query['type']
         cls = get_resource_class(class_id)
-        child = resource.make_resource(name, cls)
+        child = resource.make_resource(name, cls, model=model)
 
         # The metadata
         language = resource.get_edit_languages(context)[0]
         title = Property(title, lang=language)
         child.metadata.set_property('title', title)
-
-        # XXX We have to save model
-        #model = resource.get_resource('models/%s/' % form['model'])
-        #for model_resource in model.get_resources():
-        #    path = child.get_pathto(model_resource)
-        #    child.copy_resource(path, model_resource.name)
 
         # Ok
         goto = './%s/' % name
@@ -116,3 +111,9 @@ class MailingLetterView(STLForm):
         resource.send(context)
         msg = MSG(u'Newsletter sended !')
         return context.come_back(msg, goto='../')
+
+
+
+
+
+

@@ -15,11 +15,13 @@
     <b>State:</b> Not send
   </stl:inline>
   <br/>
-  <b>Number of Emails: </b> ${nb_users}<br/>
+  <b>Number of Emails: </b> ${nb_users}<br/><br/>
+
   <form method="POST">
-    <input type="submit" value="Envoyer la newsletter"/>
-  </form>
-  <h2>Html Version</h2>
+    <input type="submit" value="Send the newsletter"/>
+  </form><br/>
+
+  <h2>HTML Version</h2>
   <div>
     <div class="clear"/>
     ${data}
