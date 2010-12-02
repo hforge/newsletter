@@ -58,12 +58,9 @@ class MailingLetter(Folder):
         model = kw['model']
         # A model is used ?
         if model:
-            pass
-            # XXX We have to save model
-            #model = resource.get_resource('models/%s/' % form['model'])
-            #for model_resource in model.get_resources():
-            #    path = child.get_pathto(model_resource)
-            #    child.copy_resource(path, model_resource.name)
+            model = self.parent.get_resource('models/%s' % model)
+            for res in model.get_resources():
+                self.copy_resource(res.get_abspath(), model.get_pathto(res))
         else:
             # HTML Version
             self.make_resource('html_body', WebPage)

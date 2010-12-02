@@ -21,6 +21,8 @@ from itools.gettext import MSG
 from ikaaro.file import File
 from ikaaro.folder import Folder
 from ikaaro.registry import register_resource_class
+from ikaaro.text import Text
+from ikaaro.webpage import WebPage
 
 
 
@@ -30,6 +32,15 @@ class Model(Folder):
     class_title = MSG(u'Mailing Model')
 
     class_views = ['view', 'new_resource', 'browse_content']
+
+
+    def init_resource(self, **kw):
+        Folder.init_resource(self, **kw)
+
+        # HTML Version
+        self.make_resource('html_body', WebPage)
+        # TXT Version
+        self.make_resource('txt_body', Text)
 
 
     def get_document_types(self):

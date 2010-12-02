@@ -56,8 +56,8 @@ class Mailing(Folder, Observable):
         Folder.init_resource(self, **kw)
 
         # Models
-        kw = {'title': {'en': u'Newsletter Models',
-                        'fr': u'Modèles de newsletter'}}
+        kw = {'title': {'en': u'Models',
+                        'fr': u'Modèles'}}
         self.make_resource('models', Models, **kw)
 
 
