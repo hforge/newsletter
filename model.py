@@ -24,14 +24,19 @@ from ikaaro.registry import register_resource_class
 from ikaaro.text import Text
 from ikaaro.webpage import WebPage
 
+# Import from Newsletter
+from model_views import ModelView
 
 
 class Model(Folder):
 
     class_id = 'mailing-model'
     class_title = MSG(u'Mailing Model')
+    __fixed_handlers__ = ['html_body', 'txt_body']
 
     class_views = ['view', 'new_resource', 'browse_content']
+
+    view = ModelView()
 
 
     def init_resource(self, **kw):

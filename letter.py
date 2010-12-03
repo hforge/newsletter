@@ -26,11 +26,12 @@ from ikaaro.webpage import WebPage
 from ikaaro.text import Text
 
 # Import from Newsletter
+from model import Model
 from letter_views import MailingLetterNewInstance, MailingLetterView
 
 
 
-class MailingLetter(Folder):
+class MailingLetter(Model):
 
     class_id = 'mailing-letter'
     class_title = MSG(u'Mailing Letter')
@@ -42,7 +43,7 @@ class MailingLetter(Folder):
                                number=Integer(source='metadata'),
                                email=Email(source='metadata'))
 
-    class_views = ['view']
+    #class_views = ['view', 'new_instance']
     #               'edit_html', 'edit_text',
     #               'browse_content?mode=list',
     #               'send',

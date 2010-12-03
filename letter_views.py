@@ -116,7 +116,3 @@ class MailingLetterView(STLForm):
         return context.come_back(msg, goto='../')
 
 
-
-
-
-

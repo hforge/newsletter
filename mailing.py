@@ -42,6 +42,7 @@ class Mailing(Folder, Observable):
     class_schema = merge_dicts(Folder.class_schema,
                                sender=Email(source='metadata'),
                                cc_list=Tokens(source='metadata'))
+    __fixed_handlers__ = ['models']
 
     class_views = ['view', 'edit', 'subscribe', 'models']
 
