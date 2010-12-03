@@ -16,23 +16,19 @@
 
 # Import from itools
 from itools.gettext import MSG
-from itools.web import STLView
+
+# import from ikaaro
+from ikaaro.webpage import WebPage
+
+# Import from Newsletter
+from html_data_views import HTMLDataEdit
 
 
 
-class ModelView(STLView):
+class HTMLData(WebPage):
+    class_id = 'mailing-html-body'
+    class_title = MSG(u'HTML Body')
 
-    template = '/ui/mailing/Model_view.xml'
-    access = 'is_allowed_to_add'
-    title = MSG(u'View')
+    class_views = ['edit']
 
-
-    def get_namespace(self, resource, context):
-
-        # The data XXX handle the language
-        html_data = resource.get_resource('html_body').get_html_data()
-        txt_data = resource.get_resource('txt_body').to_text()
-
-        return {'html_data': html_data,
-                'txt_data': txt_data}
-
+    edit = HTMLDataEdit()

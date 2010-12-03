@@ -15,24 +15,17 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # Import from itools
-from itools.gettext import MSG
-from itools.web import STLView
+from itools.datatypes import String
+
+# import from ikaaro
+from ikaaro.webpage import HTMLEditView
+from ikaaro.autoform import HTMLBody, rte_widget, timestamp_widget
 
 
 
-class ModelView(STLView):
-
-    template = '/ui/mailing/Model_view.xml'
-    access = 'is_allowed_to_add'
-    title = MSG(u'View')
-
-
-    def get_namespace(self, resource, context):
-
-        # The data XXX handle the language
-        html_data = resource.get_resource('html_body').get_html_data()
-        txt_data = resource.get_resource('txt_body').to_text()
-
-        return {'html_data': html_data,
-                'txt_data': txt_data}
+class HTMLDataEdit(HTMLEditView):
+    schema = {'timestamp': HTMLEditView.schema['timestamp'],
+              'data':
+              HTMLBody(multilingual=True, parameters_schema={'lang': String})}
+    widgets = [rte_widget, timestamp_widget]
 
