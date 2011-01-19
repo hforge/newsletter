@@ -39,7 +39,7 @@ class MailingLetter(Model):
                             u'visitors ...')
     class_schema = merge_dicts(Folder.class_schema,
                                model=String(source='metadata'),
-                               is_send=Boolean(source='metadata'),
+                               is_sent=Boolean(source='metadata'),
                                number=Integer(source='metadata'),
                                email=Email(source='metadata'))
 
@@ -71,6 +71,17 @@ class MailingLetter(Model):
             self.make_resource('txt_body', TXTData,
                                title={'en': u'Text body',
                                       'fr': u'Partie texte'})
+
+
+    def send(self):
+
+        # Stats
+        number = self.parent.get_subscripters_nb()
+        self.set_property('number', number)
+        self.set_property('is_sent', True)
+
+        print 'SENT !'
+
 
 
 

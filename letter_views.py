@@ -86,7 +86,7 @@ class MailingLetterView(STLForm):
         # nb_users
         number = resource.get_property('number')
         if number:
-            nb_users = MSG(u'Send to {nb} E-Mails')
+            nb_users = MSG(u'Sent to {nb} E-Mails')
             nb_users = nb_users.gettext(nb=number)
         else:
             nb_users =  MSG(u'There are {nb} E-Mails in Database')
@@ -98,21 +98,19 @@ class MailingLetterView(STLForm):
         txt_data = resource.get_resource('txt_body').to_text()
 
         return {'subject': resource.get_title(),
-                'is_send': resource.get_property('is_send'),
+                'is_sent': resource.get_property('is_sent'),
                 'nb_users': nb_users,
                 'html_data': html_data,
                 'txt_data': txt_data}
 
 
     def action(self, resource, context, form):
-        if resource.get_property('is_send') is True:
-            context.message = MSG(u'Newsletter already send !')
-            return
-        sender = resource.get_property('sender')
+        # Sender OK ?
+        sender = resource.parent.get_property('sender')
         if not sender:
             context.message = MSG(u'Please configure the sender !')
-        resource.send(context)
-        msg = MSG(u'Newsletter sended !')
-        return context.come_back(msg, goto='../')
+            return
 
+        resource.send()
+        msg = MSG(u'Newsletter sent !')
 

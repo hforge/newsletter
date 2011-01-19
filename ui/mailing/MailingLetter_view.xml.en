@@ -8,18 +8,19 @@
     Informations
   </h2>
   <b>Subject: </b> ${subject}<br/>
-  <stl:inline stl:if="is_send">
-    <b>State:</b> Already send
+  <stl:inline stl:if="is_sent">
+    <b>State:</b> Already sent
   </stl:inline>
-  <stl:inline stl:if="not is_send">
+  <stl:inline stl:if="not is_sent">
     <b>State:</b> Not send
   </stl:inline>
   <br/>
   <b>Number of Emails: </b> ${nb_users}<br/><br/>
 
-  <form method="POST">
+  <form method="POST" stl:if="not is_sent">
     <input type="submit" value="Send the newsletter"/>
-  </form><br/>
+    <br/>
+  </form>
 
   <h2>HTML Version</h2>
   <div>
