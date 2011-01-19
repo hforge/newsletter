@@ -12,7 +12,7 @@
     <b>State:</b> Already sent
   </stl:inline>
   <stl:inline stl:if="not is_sent">
-    <b>State:</b> Not send
+    <b>State:</b> Not sent
   </stl:inline>
   <br/>
   <b>Number of Emails: </b> ${nb_users}<br/><br/>

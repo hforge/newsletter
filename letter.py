@@ -73,14 +73,39 @@ class MailingLetter(Model):
                                       'fr': u'Partie texte'})
 
 
-    def send(self):
+    def _make_mail_body(self, context):
+        # URI to unsubscribe
+        unsub_uri = context.get_link(self.parent)
+        unsub_uri = str(context.uri.resolve(unsub_uri))
+        unsub_uri += '/;unsubscribe?user={user}'
+
+        # Make the txt part
+        txt_data = self.get_resource('txt_body').to_text()
+        txt_data += u'\n\n'
+        txt_data += u'==================================================\n'
+        txt_data += MSG(u'Click there to unsubscribe\n').gettext()
+        txt_data += unsub_uri
+        txt_data = txt_data.encode('utf-8')
+
+        return txt_data
+
+
+    def send(self, context):
+        # Make the mail
+        mail_body = self._make_mail_body(context)
+
+        # All object must be public
+        for object in self.get_resources():
+            object.set_property('state', 'public')
 
         # Stats
         number = self.parent.get_subscripters_nb()
         self.set_property('number', number)
         self.set_property('is_sent', True)
 
+        # XXX FINISH ME
         print 'SENT !'
+        print mail_body.format(user='0')
 
 
 

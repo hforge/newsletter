@@ -111,6 +111,6 @@ class MailingLetterView(STLForm):
             context.message = MSG(u'Please configure the sender !')
             return
 
-        resource.send()
+        resource.send(context)
         msg = MSG(u'Newsletter sent !')
 
