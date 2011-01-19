@@ -50,9 +50,11 @@ class Model(Folder):
         Folder.init_resource(self, **kw)
 
         # HTML Version
-        self.make_resource('html_body', HTMLData, title=u'HTML Body')
+        self.make_resource('html_body', HTMLData,
+                           title={'en': u'HTML Body', 'fr': u'Partie HTML'})
         # TXT Version
-        self.make_resource('txt_body', TXTData, title=u'Text body')
+        self.make_resource('txt_body', TXTData,
+                           title={'en': u'Text body', 'fr': u'Partie texte'})
 
 
     def get_document_types(self):
