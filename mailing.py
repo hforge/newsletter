@@ -66,6 +66,11 @@ class Mailing(Folder, Observable):
         return [MailingLetter]
 
 
+    def get_subscripters_nb(self):
+        users = self.metadata.get_property('cc_list')
+        return len(users.value)
+
+
 
 # Register
 register_document_type(Mailing)

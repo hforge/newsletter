@@ -73,5 +73,6 @@ class MailingLetter(Model):
                                       'fr': u'Partie texte'})
 
 
+
 # Register
 register_resource_class(MailingLetter)

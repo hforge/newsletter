@@ -86,12 +86,12 @@ class MailingLetterView(STLForm):
         # nb_users
         number = resource.get_property('number')
         if number:
-            nb_users = u'Send to %s E-Mails' % number
+            nb_users = MSG(u'Send to {nb} E-Mails')
+            nb_users = nb_users.gettext(nb=number)
         else:
-            # XXX
-            #users = resource.parent.get_resource('users').handler
-            #nb_users = u'There are %s E-Mails in Database' % users.get_n_records()
-            nb_users =  u'There are [TODO] E-Mails in Database'
+            nb_users =  MSG(u'There are {nb} E-Mails in Database')
+            nb_users = nb_users.gettext(
+                                nb=resource.parent.get_subscripters_nb())
 
         # The data XXX handle the language
         html_data = resource.get_resource('html_body').get_html_data()
@@ -99,7 +99,7 @@ class MailingLetterView(STLForm):
 
         return {'subject': resource.get_title(),
                 'is_send': resource.get_property('is_send'),
-                'nb_users': MSG(nb_users),
+                'nb_users': nb_users,
                 'html_data': html_data,
                 'txt_data': txt_data}
 
