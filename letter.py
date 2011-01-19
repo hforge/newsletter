@@ -22,11 +22,11 @@ from itools.datatypes import Boolean, Integer, Email, String
 # import from ikaaro
 from ikaaro.folder import Folder
 from ikaaro.registry import register_resource_class
-from ikaaro.webpage import WebPage
-from ikaaro.text import Text
 
 # Import from Newsletter
 from model import Model
+from html_data import HTMLData
+from txt_data import TXTData
 from letter_views import MailingLetterNewInstance, MailingLetterView
 
 
@@ -64,9 +64,9 @@ class MailingLetter(Model):
                 self.copy_resource(res.get_abspath(), model.get_pathto(res))
         else:
             # HTML Version
-            self.make_resource('html_body', WebPage)
+            self.make_resource('html_body', HTMLData, title=u'HTML Body')
             # TXT Version
-            self.make_resource('txt_body', Text)
+            self.make_resource('txt_body', TXTData, title=u'Text body')
 
 
 
