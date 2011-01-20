@@ -38,7 +38,7 @@ class Model(Folder):
     class_views = ['view', 'edit_html', 'edit_txt', 'browse_content']
 
     view = ModelView()
-    edit_html = GoToSpecificDocument(specific_document='html_body',
+    edit_html = GoToSpecificDocument(specific_document='html_body/;edit',
                                      title=MSG(u'Edit HTML'),
                                      access='is_allowed_to_edit')
     edit_txt =  GoToSpecificDocument(specific_document='txt_body',

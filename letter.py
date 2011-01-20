@@ -79,11 +79,20 @@ class MailingLetter(Model):
         unsub_uri = str(context.uri.resolve(unsub_uri))
         unsub_uri += '/;subscribe'
 
+        # URI to view the page
+        page_uri = context.get_link(self.get_resource('html_body'))
+        page_uri = str(context.uri.resolve(page_uri)) + '/;view'
+
         # Make the txt part
-        txt_data = self.get_resource('txt_body').to_text()
+        txt_data = MSG(
+              u'To see this news in your browser, please follow this link:\n'
+                       ).gettext()
+        txt_data += page_uri + '\n'
+        txt_data += u'======================================================\n'
+        txt_data += self.get_resource('txt_body').to_text()
         txt_data += u'\n\n'
-        txt_data += u'==================================================\n'
-        txt_data += MSG(u'Click there to unsubscribe\n').gettext()
+        txt_data += u'======================================================\n'
+        txt_data += MSG(u'Click here to unsubscribe\n').gettext()
         txt_data += unsub_uri
         txt_data = txt_data.encode('utf-8')
 
@@ -101,7 +110,7 @@ class MailingLetter(Model):
         # Stats
         number = self.parent.get_subscripters_nb()
         self.set_property('number', number)
-        self.set_property('is_sent', True)
+        #self.set_property('is_sent', True)
 
         # XXX FINISH ME
         print 'SENT !'

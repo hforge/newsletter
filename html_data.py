@@ -29,6 +29,6 @@ class HTMLData(WebPage):
     class_id = 'mailing-html-body'
     class_title = MSG(u'HTML Body')
 
-    class_views = ['edit']
+    class_views = ['view', 'edit']
 
     edit = HTMLDataEdit()
