@@ -16,15 +16,16 @@
 
 # Import from itools
 from itools.core import merge_dicts
+from itools.database import PhraseQuery, AndQuery
 from itools.datatypes import Email
 from itools.gettext import MSG
 
 # import from ikaaro
-from ikaaro.folder_views import Folder_BrowseContent
-from ikaaro.views import ContextMenu
-from ikaaro.resource_views import DBResource_Edit
 from ikaaro.autoform import TextWidget
-
+from ikaaro.folder_views import Folder_BrowseContent
+from ikaaro.resource_views import DBResource_Edit
+from ikaaro.utils import get_base_path_query
+from ikaaro.views import ContextMenu
 
 
 class MailingEdit(DBResource_Edit):
@@ -55,6 +56,23 @@ class MailingView(Folder_BrowseContent):
     access = 'is_admin'
     title = MSG(u'View')
 
+    search_template = None
     context_menus = [MailingMenu()]
 
 
+    def get_items(self, resource, context, *args):
+        # Query
+        args = list(args)
+
+        # Search in subtree
+        path = resource.get_canonical_path()
+        query = get_base_path_query(str(path))
+        args.append(query)
+
+        # Filter by type
+        args.append(PhraseQuery('format', 'mailing-letter'))
+
+        # Ok
+        query = AndQuery(*args)
+
+        return context.root.search(query)
