@@ -22,10 +22,12 @@ from itools.gettext import MSG
 
 # import from ikaaro
 from ikaaro.autoform import TextWidget
+from ikaaro.cc import SubscribeForm
 from ikaaro.folder_views import Folder_BrowseContent
 from ikaaro.resource_views import DBResource_Edit
 from ikaaro.utils import get_base_path_query
 from ikaaro.views import ContextMenu
+
 
 
 class MailingEdit(DBResource_Edit):
@@ -76,3 +78,8 @@ class MailingView(Folder_BrowseContent):
         query = AndQuery(*args)
 
         return context.root.search(query)
+
+
+
+class MailingSubscribe(SubscribeForm):
+    template = '/ui/mailing/Mailing_subscribe.xml'
