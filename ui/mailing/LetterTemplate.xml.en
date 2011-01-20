@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta content="application/xhtml+xml; charset=utf-8"
+      http-equiv="Content-Type"/>
+    <title></title>
+  </head>
+  <body>
+    <div style="text-align:center">
+      <a href="${page_uri}"><img src="${banner}/;download"/></a>
+    </div><br/>
+    <h2>${title}</h2><br/>
+    Finish me, ...
+  </body>
+</html>
+

@@ -15,9 +15,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # Import from itools
-from itools.gettext import MSG
 from itools.core import merge_dicts
 from itools.datatypes import Boolean, Integer, Email
+from itools.gettext import MSG
+from itools.stl import stl
+from itools.uri import get_reference
 
 # import from ikaaro
 from ikaaro.file import File
@@ -65,17 +67,31 @@ class MailingLetter(Folder):
 
     def init_resource(self, **kw):
         Folder.init_resource(self)
-
-        # XXX FINISH ME
         banner = kw['banner']
-        print "BANNER ===>", type(banner), banner
 
         # HTML Version
-        self.make_resource('html_body', HTMLData,
-                           title={'en': u'HTML Body', 'fr': u'Partie HTML'})
+        if banner:
+            default_language = self.get_site_root().get_default_language()
+            banner = self.parent.get_resource(banner)
+            namespace = {'page_uri': './html_body/;view',
+                         'banner': get_reference(banner.get_abspath()),
+                         'title': kw['title']}
+            template = self.get_root().get_resource(
+                                       '/ui/mailing/LetterTemplate.xml')
+            body = stl(template, namespace, mode='xhtml')
+            self.make_resource('html_body', HTMLData, body=body,
+                               language=default_language,
+                               title={'en': u'HTML Body',
+                                      'fr': u'Partie HTML'})
+        else:
+            self.make_resource('html_body', HTMLData,
+                               title={'en': u'HTML Body',
+                                      'fr': u'Partie HTML'})
+
         # TXT Version
         self.make_resource('txt_body', TXTData,
-                           title={'en': u'Text body', 'fr': u'Partie texte'})
+                           title={'en': u'Text body',
+                                  'fr': u'Partie texte'})
 
 
     def get_document_types(self):

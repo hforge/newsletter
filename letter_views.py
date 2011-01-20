@@ -44,7 +44,7 @@ class MailingLetterNewInstance(NewInstance):
         # Create the resource
         class_id = context.query['type']
         cls = get_resource_class(class_id)
-        child = resource.make_resource(name, cls, banner=banner)
+        child = resource.make_resource(name, cls, title=title, banner=banner)
 
         # The metadata
         language = resource.get_edit_languages(context)[0]
