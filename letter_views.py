@@ -16,53 +16,35 @@
 
 # Import from itools
 from itools.core import merge_dicts
-from itools.datatypes import Enumerate
+from itools.datatypes import String
 from itools.gettext import MSG
 from itools.csv import Property
 from itools.web import STLForm
 
 # Import from ikaaro
-from ikaaro.autoform import SelectWidget
+from ikaaro.autoform import ImageSelectorWidget
 from ikaaro.views_new import NewInstance
 from ikaaro.registry import get_resource_class
 from ikaaro import messages
 
 
 
-class EnumerateModels(Enumerate):
-
-    @classmethod
-    def get_options(cls):
-        options = []
-        for model in cls.models.get_resources():
-            options.append({'name': model.name,
-                            'value': model.get_property('title')})
-        return options
-
-
-
 class MailingLetterNewInstance(NewInstance):
 
-    widgets = NewInstance.widgets + [SelectWidget('model',
-              title=MSG(u'Please choose a newsletter model'))]
-
-
-    def get_schema(self, resource, context):
-        models = context.resource.get_resource('models')
-        schema = merge_dicts(NewInstance.schema,
-                             model=EnumerateModels(models=models))
-        return schema
+    widgets = NewInstance.widgets + [ImageSelectorWidget('banner',
+              title=MSG(u'You can choose a banner'))]
+    schema = merge_dicts(NewInstance.schema, banner=String)
 
 
     def action(self, resource, context, form):
         name = form['name']
         title = form['title']
-        model = form['model']
+        banner = form['banner']
 
         # Create the resource
         class_id = context.query['type']
         cls = get_resource_class(class_id)
-        child = resource.make_resource(name, cls, model=model)
+        child = resource.make_resource(name, cls, banner=banner)
 
         # The metadata
         language = resource.get_edit_languages(context)[0]

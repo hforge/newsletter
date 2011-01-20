@@ -17,32 +17,36 @@
 # Import from itools
 from itools.gettext import MSG
 from itools.core import merge_dicts
-from itools.datatypes import Boolean, Integer, Email, String
+from itools.datatypes import Boolean, Integer, Email
 
 # import from ikaaro
+from ikaaro.file import File
 from ikaaro.folder import Folder
+from ikaaro.folder_views import GoToSpecificDocument
 from ikaaro.registry import register_resource_class
 
 # Import from Newsletter
-from model import Model
 from html_data import HTMLData
 from txt_data import TXTData
 from letter_views import MailingLetterNewInstance, MailingLetterView
 
 
 
-class MailingLetter(Model):
+class MailingLetter(Folder):
 
     class_id = 'mailing-letter'
     class_title = MSG(u'Mailing Letter')
     class_description = MSG(u'Send a newsletter to your customers or '
                             u'visitors ...')
     class_schema = merge_dicts(Folder.class_schema,
-                               model=String(source='metadata'),
                                is_sent=Boolean(source='metadata'),
                                number=Integer(source='metadata'),
                                email=Email(source='metadata'))
+    __fixed_handlers__ = ['html_body', 'txt_body']
 
+    class_views = ['view', 'edit_html', 'edit_txt', 'browse_content']
+
+    # XXX DELETE ME ?
     #class_views = ['view', 'new_instance']
     #               'edit_html', 'edit_text',
     #               'browse_content?mode=list',
@@ -51,26 +55,31 @@ class MailingLetter(Model):
 
     new_instance = MailingLetterNewInstance()
     view = MailingLetterView()
+    edit_html = GoToSpecificDocument(specific_document='html_body/;edit',
+                                     title=MSG(u'Edit HTML'),
+                                     access='is_allowed_to_edit')
+    edit_txt =  GoToSpecificDocument(specific_document='txt_body',
+                                     title=MSG(u'Edit Text'),
+                                     access='is_allowed_to_edit')
 
 
     def init_resource(self, **kw):
-        Folder.init_resource(self, **kw)
+        Folder.init_resource(self)
 
-        model = kw['model']
-        # A model is used ?
-        if model:
-            model = self.parent.get_resource('models/%s' % model)
-            for res in model.get_resources():
-                self.copy_resource(res.get_abspath(), model.get_pathto(res))
-        else:
-            # HTML Version
-            self.make_resource('html_body', HTMLData,
-                               title={'en': u'HTML Body',
-                                      'fr': u'Partie HTML'})
-            # TXT Version
-            self.make_resource('txt_body', TXTData,
-                               title={'en': u'Text body',
-                                      'fr': u'Partie texte'})
+        # XXX FINISH ME
+        banner = kw['banner']
+        print "BANNER ===>", type(banner), banner
+
+        # HTML Version
+        self.make_resource('html_body', HTMLData,
+                           title={'en': u'HTML Body', 'fr': u'Partie HTML'})
+        # TXT Version
+        self.make_resource('txt_body', TXTData,
+                           title={'en': u'Text body', 'fr': u'Partie texte'})
+
+
+    def get_document_types(self):
+        return [File]
 
 
     def _make_mail_body(self, context):
@@ -115,7 +124,6 @@ class MailingLetter(Model):
         # XXX FINISH ME
         print 'SENT !'
         print mail_body
-
 
 
 
