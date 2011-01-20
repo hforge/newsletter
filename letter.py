@@ -77,7 +77,7 @@ class MailingLetter(Model):
         # URI to unsubscribe
         unsub_uri = context.get_link(self.parent)
         unsub_uri = str(context.uri.resolve(unsub_uri))
-        unsub_uri += '/;unsubscribe?user={user}'
+        unsub_uri += '/;subscribe'
 
         # Make the txt part
         txt_data = self.get_resource('txt_body').to_text()
@@ -105,7 +105,7 @@ class MailingLetter(Model):
 
         # XXX FINISH ME
         print 'SENT !'
-        print mail_body.format(user='0')
+        print mail_body
 
 
 
