@@ -18,6 +18,7 @@
 from itools.core import merge_dicts
 from itools.datatypes import Boolean, Integer, Email
 from itools.gettext import MSG
+from itools.html import HTMLParser
 from itools.stl import stl
 from itools.uri import get_reference
 
@@ -105,7 +106,8 @@ class MailingLetter(Folder):
         unsub_uri += '/;subscribe'
 
         # URI to view the page
-        page_uri = context.get_link(self.get_resource('html_body'))
+        html_body = self.get_resource('html_body')
+        page_uri = context.get_link(html_body)
         page_uri = str(context.uri.resolve(page_uri)) + '/;view'
 
         # Make the txt part
@@ -121,25 +123,46 @@ class MailingLetter(Folder):
         txt_data += unsub_uri
         txt_data = txt_data.encode('utf-8')
 
-        return txt_data
+        # Make the HTML part
+        header = MSG(u'Please click <a href="{page_uri}">here</a> '
+                     ).gettext(page_uri=page_uri)
+        header += MSG(u'to see this news on your browser').gettext()
+        header = HTMLParser(header.encode('utf-8'))
+        footer = MSG(u'Click <a href="{unsub_uri}">here</a> to unsubscribe'
+                     ).gettext(unsub_uri=unsub_uri)
+        footer = HTMLParser(footer.encode('utf-8'))
+
+        handler = html_body.handler
+        body = handler.get_body()
+        events = (handler.events[:body.start + 1]
+                  + header
+                  + handler.events[body.start + 1:body.end]
+                  + footer
+                  + handler.events[body.end:])
+        html_data = stl(events=events, prefix=context.uri, mode='xhtml')
+
+        return (txt_data, html_data)
 
 
     def send(self, context):
-        # Make the mail
-        mail_body = self._make_mail_body(context)
-
         # All object must be public
         for object in self.get_resources():
             object.set_property('state', 'public')
 
+        # Make the mail
+        text, html = self._make_mail_body(context)
+
         # Stats
         number = self.parent.get_subscripters_nb()
         self.set_property('number', number)
-        #self.set_property('is_sent', True)
+        self.set_property('is_sent', True)
 
         # XXX FINISH ME
-        print 'SENT !'
-        print mail_body
+        print '#' * 80
+        print text
+        print '*' * 80
+        print html
+        print '#' * 80
 
 
 
