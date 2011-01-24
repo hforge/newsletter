@@ -58,8 +58,15 @@ class MailingView(Folder_BrowseContent):
     access = 'is_admin'
     title = MSG(u'View')
 
+    template = '/ui/mailing/Mailing_view.xml'
     search_template = None
     context_menus = [MailingMenu()]
+
+
+    def get_namespace(self, resource, context):
+        namespace = super(MailingView, self).get_namespace(resource, context)
+        namespace['spool_size'] = context.server.get_spool_size()
+        return namespace
 
 
     def get_items(self, resource, context, *args):
