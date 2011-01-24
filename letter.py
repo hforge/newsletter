@@ -14,6 +14,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+# Import from the Standard Library
+from email.MIMEMultipart import MIMEMultipart
+from email.MIMEText import MIMEText
+from email.Utils import formatdate
+from email.header import Header
+
 # Import from itools
 from itools.core import merge_dicts
 from itools.datatypes import Boolean, Integer, Email
@@ -144,25 +150,58 @@ class MailingLetter(Folder):
         return (txt_data, html_data)
 
 
+    def _make_message(self, from_addr, to_addr, subject, text, html):
+
+        # Build the message
+        message = MIMEMultipart('related')
+        message['Subject'] = Header(subject, 'utf-8')
+        message['Date'] = formatdate(localtime=True)
+        message['From'] = from_addr
+        message['To'] = to_addr
+
+        message_html = MIMEText(html, 'html', _charset='utf-8')
+        message_text = MIMEText(text, _charset='utf-8')
+        message_alternative = MIMEMultipart('alternative')
+        message.attach(message_alternative)
+        message_alternative.attach(message_text)
+        message_alternative.attach(message_html)
+
+        return message
+
+
     def send(self, context):
+        server = context.server
+
+        # Users
+        users = self.parent.get_property('cc_list')
+        if not users:
+            return
+
         # All object must be public
         for object in self.get_resources():
             object.set_property('state', 'public')
 
-        # Make the mail
+        # Prepare the last infos
+        from_addr = self.parent.get_property('sender')
+        subject = self.get_title().encode('utf-8')
         text, html = self._make_mail_body(context)
+
+        # Save the emails in the spool
+        for user in users:
+            user = context.root.get_user(user)
+            if user:
+                mail = user.get_property('email')
+                message = self._make_message(from_addr, mail, subject, text,
+                                             html)
+                server.save_email(message)
+
+        # And send the messages
+        server.flush_spool()
 
         # Stats
         number = self.parent.get_subscripters_nb()
         self.set_property('number', number)
         self.set_property('is_sent', True)
-
-        # XXX FINISH ME
-        print '#' * 80
-        print text
-        print '*' * 80
-        print html
-        print '#' * 80
 
 
 

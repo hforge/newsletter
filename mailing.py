@@ -53,10 +53,8 @@ class Mailing(Folder, Observable):
 
 
     def get_subscripters_nb(self):
-        users = self.metadata.get_property('cc_list')
-        if users:
-            return len(users.value)
-        return 0
+        users = self.get_property('cc_list')
+        return len(users)
 
 
 
