@@ -16,7 +16,7 @@
 
 # Import from itools
 from itools.core import merge_dicts
-from itools.datatypes import Email, Tokens
+from itools.datatypes import Email
 from itools.gettext import MSG
 
 # import from ikaaro
@@ -38,8 +38,8 @@ class Mailing(Folder, Observable):
     class_icon16 = 'icons/16x16/mail.png'
     class_icon48 = 'icons/48x48/mail.png'
     class_schema = merge_dicts(Folder.class_schema,
-                               sender=Email(source='metadata'),
-                               cc_list=Tokens(source='metadata'))
+                               Observable.class_schema,
+                               sender=Email(source='metadata'))
 
     class_views = ['view', 'edit', 'subscribe']
 
