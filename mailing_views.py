@@ -20,11 +20,13 @@ from itools.core import merge_dicts
 from itools.database import PhraseQuery, AndQuery
 from itools.datatypes import Email
 from itools.gettext import MSG
+from itools.web import ERROR
 
 # import from ikaaro
 from ikaaro.autoform import TextWidget
 from ikaaro.cc import SubscribeForm
 from ikaaro.folder_views import Folder_BrowseContent
+from ikaaro.messages import MSG_CHANGES_SAVED
 from ikaaro.resource_views import DBResource_Edit
 from ikaaro.utils import get_base_path_query
 from ikaaro.views import ContextMenu
@@ -90,4 +92,48 @@ class MailingView(Folder_BrowseContent):
 
 
 class MailingSubscribe(SubscribeForm):
+
     template = '/ui/mailing/Mailing_subscribe.xml'
+
+
+    def action(self, resource, context, form):
+        new_cc = form.get('cc_list')
+        new_users = form.get('new_users')
+        grey_list =  set(resource.get_property('grey_list'))
+
+        # Case 1: anonymous user, not yet supported
+        user = context.user
+        if user is None:
+            context.message = ERROR(u'Anonymous users not yet supported.')
+            return
+
+        # Case 2: admin
+        ac = resource.get_access_control()
+        is_admin = ac.is_admin(context.user, resource)
+        if is_admin:
+            new_id_set = set()
+            for email in new_users:
+                new_id_set.add(self._add_user(resource, context, email))
+            new_cc = set(new_cc).union(new_id_set)
+            new_cc = new_cc - grey_list
+            resource.set_property('cc_list', tuple(new_cc))
+            context.message = MSG_CHANGES_SAVED
+            context.get_form()['cc_list'] = list(new_cc)
+            context.get_form()['new_users'] = ''
+            return
+
+        # Case 3: someone else
+        old_cc = resource.get_property('cc_list')
+        if user.name in new_cc:
+            new_cc = set(old_cc)
+            new_cc.add(user.name)
+            grey_list.discard(user.name)
+        else:
+            new_cc = set(old_cc)
+            new_cc.discard(user.name)
+            grey_list.add(user.name)
+        resource.set_property('cc_list', tuple(new_cc))
+        resource.set_property('grey_list', tuple(grey_list))
+        context.message = MSG_CHANGES_SAVED
+        context.get_form()['cc_list'] = list(new_cc)
+        context.get_form()['new_users'] = ''
