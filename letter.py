@@ -27,7 +27,7 @@ from itools.datatypes import Boolean, Integer, Email
 from itools.gettext import MSG
 from itools.html import HTMLParser
 from itools.stl import stl
-from itools.uri import get_reference
+from itools.web import get_context
 
 # import from ikaaro
 from ikaaro.file import File
@@ -56,7 +56,7 @@ class MailingLetter(Folder):
 
     class_views = ['view', 'edit_html', 'edit_txt', 'browse_content']
 
-    # XXX DELETE ME ?
+    # XXX DELETE ME
     #class_views = ['view', 'new_instance']
     #               'edit_html', 'edit_text',
     #               'browse_content?mode=list',
@@ -82,7 +82,7 @@ class MailingLetter(Folder):
             default_language = self.get_site_root().get_default_language()
             banner = self.parent.get_resource(banner)
             namespace = {'page_uri': './html_body/;view',
-                         'banner': get_reference(banner.get_abspath()),
+                         'banner': get_context().get_link(banner),
                          'title': kw['title']}
             template = self.get_root().get_resource(
                                        '/ui/mailing/LetterTemplate.xml')
