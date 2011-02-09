@@ -27,6 +27,7 @@ from itools.datatypes import Boolean, Integer, Email
 from itools.gettext import MSG
 from itools.html import HTMLParser
 from itools.stl import stl
+from itools.uri import Reference
 from itools.web import get_context
 
 # import from ikaaro
@@ -146,7 +147,9 @@ class MailingLetter(Folder):
                   + handler.events[body.start + 1:body.end]
                   + footer
                   + handler.events[body.end:])
-        html_data = stl(events=events, prefix=context.uri, mode='xhtml')
+        uri = context.uri
+        base_uri = Reference(uri.scheme, uri.authority, uri.path, {}, None)
+        html_data = stl(events=events, prefix='%s/' % base_uri, mode='xhtml')
 
         return (txt_data, html_data)
 

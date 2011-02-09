@@ -17,9 +17,10 @@
 
 # Import from itools
 from itools.core import merge_dicts
+from itools.csv import Property
 from itools.datatypes import String
 from itools.gettext import MSG
-from itools.csv import Property
+from itools.stl import set_prefix
 from itools.web import STLForm
 
 # Import from ikaaro
@@ -77,7 +78,10 @@ class MailingLetterView(STLForm):
                                 nb=resource.parent.get_subscripters_nb())
 
         # The data XXX handle the language
-        html_data = resource.get_resource('html_body').get_html_data()
+        html_resource = resource.get_resource('html_body')
+        prefix = resource.get_pathto(html_resource)
+        html_data = html_resource.get_html_data()
+        html_data = set_prefix(html_data, '%s/' % prefix)
         txt_data = resource.get_resource('txt_body').to_text()
 
         return {'subject': resource.get_title(),
