@@ -99,5 +99,5 @@ class MailingLetterView(STLForm):
             return
 
         resource.send(context)
-        msg = MSG(u'Newsletter sent !')
+        context.message = MSG(u'Newsletter sent !')
 
