@@ -27,7 +27,6 @@ from itools.datatypes import Boolean, Integer, Email
 from itools.gettext import MSG
 from itools.html import HTMLParser
 from itools.stl import set_prefix, stl
-from itools.uri import Reference
 from itools.web import get_context
 
 # import from ikaaro
@@ -82,7 +81,7 @@ class MailingLetter(Folder):
         if banner:
             default_language = self.get_site_root().get_default_language()
             banner = self.parent.get_resource(banner)
-            namespace = {'page_uri': './html_body/;view',
+            namespace = {'page_uri': './;view',
                          'banner': get_context().get_link(banner),
                          'title': kw['title']}
             template = self.get_root().get_resource(
