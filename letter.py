@@ -26,7 +26,7 @@ from itools.core import merge_dicts
 from itools.datatypes import Boolean, Integer, Email
 from itools.gettext import MSG
 from itools.html import HTMLParser
-from itools.stl import stl
+from itools.stl import set_prefix, stl
 from itools.uri import Reference
 from itools.web import get_context
 
@@ -147,9 +147,11 @@ class MailingLetter(Folder):
                   + handler.events[body.start + 1:body.end]
                   + footer
                   + handler.events[body.end:])
-        uri = context.uri
-        base_uri = Reference(uri.scheme, uri.authority, uri.path, {}, None)
-        html_data = stl(events=events, prefix='%s/' % base_uri, mode='xhtml')
+
+        # Rewrite link with scheme and autority
+        prefix = self.get_site_root().get_pathto(html_body)
+        html_data = set_prefix(events, prefix='%s/' % prefix, uri=context.uri)
+        html_data = stl(events=html_data, mode='xhtml')
 
         return (txt_data, html_data)
 
