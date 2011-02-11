@@ -30,3 +30,5 @@ class HTMLDataEdit(HTMLEditView):
               HTMLBody(multilingual=True, parameters_schema={'lang': String})}
     widgets = [rte_widget, timestamp_widget]
 
+    def _get_schema(self, resource, context):
+        return self.schema
