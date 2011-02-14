@@ -24,6 +24,7 @@ from itools.gettext import MSG
 from ikaaro.cc import Observable
 from ikaaro.folder import Folder
 from ikaaro.registry import register_document_type
+from ikaaro.workflow import WorkflowAware
 
 # Import from Newsletter
 from letter import MailingLetter
@@ -31,7 +32,7 @@ from mailing_views import MailingView, MailingEdit, MailingSubscribe
 
 
 
-class Mailing(Folder, Observable):
+class Mailing(Folder, Observable, WorkflowAware):
 
     class_id = 'mailing'
     class_title = MSG(u'E-Mailing')
@@ -40,6 +41,7 @@ class Mailing(Folder, Observable):
     class_icon48 = 'icons/48x48/mail.png'
     class_schema = merge_dicts(Folder.class_schema,
                                Observable.class_schema,
+                               WorkflowAware.class_schema,
                                sender=Email(source='metadata'),
                                grey_list=Tokens(source='metadata'))
 
