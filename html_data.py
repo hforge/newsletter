@@ -19,6 +19,7 @@
 from itools.gettext import MSG
 
 # import from ikaaro
+from ikaaro.file_views import File_Download
 from ikaaro.webpage import WebPage
 
 # Import from Newsletter
@@ -32,4 +33,5 @@ class HTMLData(WebPage):
 
     class_views = ['view', 'edit']
 
+    view = File_Download()
     edit = HTMLDataEdit()
