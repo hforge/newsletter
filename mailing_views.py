@@ -24,6 +24,7 @@ from itools.web import ERROR
 
 # import from ikaaro
 from ikaaro.autoform import TextWidget
+from ikaaro.buttons import RemoveButton
 from ikaaro.cc import SubscribeForm
 from ikaaro.folder_views import Folder_BrowseContent
 from ikaaro.messages import MSG_CHANGES_SAVED
@@ -64,6 +65,16 @@ class MailingView(Folder_BrowseContent):
     template = '/ui/mailing/Mailing_view.xml'
     search_template = None
     context_menus = [MailingMenu()]
+
+    # Table
+    batch_msg1 = MSG(u"There is 1 newsletter.") # FIXME Use plural forms
+    batch_msg2 = MSG(u"There are {n} newsletters.")
+    table_columns = [
+        ('checkbox', None),
+        ('title', MSG(u'Title')),
+        ('mtime', MSG(u'Last Modified')),
+        ('last_author', MSG(u'Last Author'))]
+    table_actions = [ RemoveButton ]
 
 
     def get_namespace(self, resource, context):
