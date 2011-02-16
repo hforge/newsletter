@@ -101,6 +101,15 @@ class MailingView(Folder_BrowseContent):
         return context.root.search(query)
 
 
+    def get_item_value(self, resource, context, item, column):
+        if column == 'title':
+            brain, item_resource = item
+            href = '%s/' % context.get_link(item_resource)
+            return brain.title, href
+        return super(MailingView, self).get_item_value(resource, context,
+                                                       item, column)
+
+
 
 class MailingSubscribe(SubscribeForm):
 
