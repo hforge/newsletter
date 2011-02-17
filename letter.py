@@ -193,9 +193,11 @@ class MailingLetter(Folder):
         text, html = self._make_mail_body(context)
 
         # Save the emails in the spool
+        number = 0
         for user in users:
             user = context.root.get_user(user)
-            if user:
+            if user and not user.get_property('user_must_confirm'):
+                number += 1
                 mail = user.get_property('email')
                 message = self._make_message(from_addr, mail, subject, text,
                                              html)
@@ -205,7 +207,6 @@ class MailingLetter(Folder):
         server.flush_spool()
 
         # Stats
-        number = self.parent.get_subscripters_nb()
         self.set_property('number', number)
         self.set_property('is_sent', True)
 

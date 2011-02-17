@@ -115,16 +115,39 @@ class MailingSubscribe(SubscribeForm):
 
     template = '/ui/mailing/Mailing_subscribe.xml'
 
-
     def action(self, resource, context, form):
+        x_email = form.get('x_email')
+        x_subscribe = form.get('x_subscribe')
         new_cc = form.get('cc_list')
         new_users = form.get('new_users')
         grey_list =  set(resource.get_property('grey_list'))
 
-        # Case 1: anonymous user, not yet supported
+        # Case 1: anonymous user
         user = context.user
         if user is None:
-            context.message = ERROR(u'Anonymous users not yet supported.')
+            new_cc = set(resource.get_property('cc_list'))
+
+            if x_subscribe:
+                new_id = self._add_user(resource, context, x_email)
+                new_cc.add(new_id)
+                grey_list.discard(new_id)
+                context.message = MSG(u'A new account has been created and '
+                                u'you are now registered to this newsletter')
+            else:
+                # Check whether the user already exists
+                user = context.root.get_user_from_login(x_email)
+                if user:
+                    new_cc.discard(user.name)
+                    grey_list.add(user.name)
+                    context.message = MSG_CHANGES_SAVED
+                else:
+                    context.message = ERROR(
+                                    u'This user was not in our database')
+            # Ok
+            resource.set_property('cc_list', tuple(new_cc))
+            resource.set_property('grey_list', tuple(grey_list))
+            context.get_form()['cc_list'] = list(new_cc)
+            context.get_form()['new_users'] = ''
             return
 
         # Case 2: admin
@@ -136,10 +159,10 @@ class MailingSubscribe(SubscribeForm):
                 new_id_set.add(self._add_user(resource, context, email))
             new_cc = set(new_cc).union(new_id_set)
             new_cc = new_cc - grey_list
-            resource.set_property('cc_list', tuple(new_cc))
+
+            # Ok
             context.message = MSG_CHANGES_SAVED
-            context.get_form()['cc_list'] = list(new_cc)
-            context.get_form()['new_users'] = ''
+            self._reset_context(resource, context, new_cc)
             return
 
         # Case 3: someone else
@@ -152,8 +175,8 @@ class MailingSubscribe(SubscribeForm):
             new_cc = set(old_cc)
             new_cc.discard(user.name)
             grey_list.add(user.name)
-        resource.set_property('cc_list', tuple(new_cc))
-        resource.set_property('grey_list', tuple(grey_list))
+
+        # Ok
         context.message = MSG_CHANGES_SAVED
-        context.get_form()['cc_list'] = list(new_cc)
-        context.get_form()['new_users'] = ''
+        resource.set_property('grey_list', tuple(grey_list))
+        self._reset_context(resource, context, new_cc)
