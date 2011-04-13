@@ -33,28 +33,30 @@ from ikaaro import messages
 
 class MailingLetterNewInstance(NewInstance):
 
+    schema = merge_dicts(NewInstance.schema, banner=String)
     widgets = NewInstance.widgets + [ImageSelectorWidget('banner',
               title=MSG(u'You can choose a banner'))]
-    schema = merge_dicts(NewInstance.schema, banner=String)
 
 
     def action(self, resource, context, form):
-        name = form['name']
-        title = form['title']
-        banner = form['banner']
-
-        # Create the resource
+        # Get the container
+        container = form['container']
+        # Make the resource
         class_id = context.query['type']
         cls = get_resource_class(class_id)
-        child = resource.make_resource(name, cls, title=title, banner=banner)
-
-        # The metadata
-        language = resource.get_edit_languages(context)[0]
-        title = Property(title, lang=language)
+        # Banner relative to here
+        prefix = container.get_pathto(resource)
+        banner = prefix.resolve2(form['banner'])
+        child = container.make_resource(form['name'], cls, banner=banner,
+                title=form['title'])
+        # Set properties
+        language = container.get_edit_languages(context)[0]
+        title = Property(form['title'], lang=language)
         child.metadata.set_property('title', title)
-
         # Ok
-        goto = './%s/' % name
+        goto = str(resource.get_pathto(child))
+        if self.goto_view:
+            goto = '%s/;%s' % (goto, self.goto_view)
         return context.come_back(messages.MSG_NEW_RESOURCE, goto=goto)
 
 
