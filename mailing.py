@@ -27,7 +27,7 @@ from ikaaro.registry import register_document_type
 
 # Import from Newsletter
 from letter import MailingLetter
-from mailing_views import MailingView, MailingEdit, MailingSubscribe
+from mailing_views import MailingView, MailingEdit
 
 
 
@@ -47,7 +47,6 @@ class Mailing(Folder, Observable):
 
     view = MailingView()
     edit = MailingEdit()
-    subscribe = MailingSubscribe()
 
 
     def get_document_types(self):
@@ -57,6 +56,30 @@ class Mailing(Folder, Observable):
     def get_subscripters_nb(self):
         users = self.get_property('cc_list')
         return len(users)
+
+
+    def after_register(self, username):
+        grey_list = set(self.get_property('grey_list'))
+        grey_list.discard(username)
+        self.set_property('grey_list', tuple(grey_list))
+
+        return super(Mailing, self).after_register(username)
+
+
+    def after_unregister(self, username):
+        grey_list = set(self.get_property('grey_list'))
+        grey_list.add(username)
+        self.set_property('grey_list', tuple(grey_list))
+
+        return super(Mailing, self).after_unregister(username)
+
+
+    def is_subscription_allowed(self, username):
+        grey_list = self.get_property('grey_list')
+        if username in grey_list:
+            return False
+
+        return super(Mailing, self).is_subscription_allowed(username)
 
 
 
