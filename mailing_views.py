@@ -24,28 +24,16 @@ from itools.gettext import MSG
 # import from ikaaro
 from ikaaro.autoform import TextWidget
 from ikaaro.buttons import RemoveButton
+from ikaaro.cc import SubscribeForm, ManageForm
 from ikaaro.folder_views import Folder_BrowseContent
 from ikaaro.resource_views import DBResource_Edit
 from ikaaro.utils import get_base_path_query
 from ikaaro.views import ContextMenu
 
 
-
-class MailingEdit(DBResource_Edit):
-
-    access = 'is_admin'
-    title = MSG(u'Configure')
-
-    schema = merge_dicts(DBResource_Edit.schema,
-                         sender=Email(source='metadata', mandatory=True))
-    widgets = DBResource_Edit.widgets + [TextWidget('sender',
-                                         title=MSG(u"Sender's Email"))]
-
-
-
-class MailingMenu(ContextMenu):
-
+class Mailing_Menu(ContextMenu):
     title = MSG(u'Menu')
+
 
     def get_items(self):
         path = self.context.get_link(self.resource)
@@ -54,14 +42,13 @@ class MailingMenu(ContextMenu):
 
 
 
-class MailingView(Folder_BrowseContent):
-
+class Mailing_View(Folder_BrowseContent):
     access = 'is_admin'
     title = MSG(u'View')
 
     template = '/ui/mailing/Mailing_view.xml'
     search_template = None
-    context_menus = [MailingMenu()]
+    context_menus = [Mailing_Menu()]
 
     # Table
     batch_msg1 = MSG(u"There is 1 newsletter.") # FIXME Use plural forms
@@ -75,7 +62,8 @@ class MailingView(Folder_BrowseContent):
 
 
     def get_namespace(self, resource, context):
-        namespace = super(MailingView, self).get_namespace(resource, context)
+        proxy = super(Mailing_View, self)
+        namespace = proxy.get_namespace(resource, context)
         namespace['spool_size'] = context.server.get_spool_size()
         return namespace
 
@@ -103,5 +91,33 @@ class MailingView(Folder_BrowseContent):
             brain, item_resource = item
             href = '%s/' % context.get_link(item_resource)
             return brain.title, href
-        return super(MailingView, self).get_item_value(resource, context,
-                                                       item, column)
+        proxy = super(Mailing_View, self)
+        return proxy.get_item_value(resource, context, item, column)
+
+
+
+class Mailing_Edit(DBResource_Edit):
+    access = 'is_admin'
+    title = MSG(u'Configure')
+
+    schema = merge_dicts(DBResource_Edit.schema,
+                         sender=Email(source='metadata', mandatory=True))
+    widgets = DBResource_Edit.widgets + [TextWidget('sender',
+                                         title=MSG(u"Sender's Email"))]
+
+
+
+class Mailing_ManageForm(ManageForm):
+
+    def get_items(self, resource, context):
+        items = super(Mailing_ManageForm, self).get_items(resource, context)
+        # Filter out unsubscribed users
+        subscribed_users = list(resource.get_subscribed_users(
+                skip_unconfirmed=False))
+        return [user for user in items if user.name in subscribed_users]
+
+
+
+class Mailing_SubscribeForm(SubscribeForm):
+    subviews = SubscribeForm.subviews[:]
+    subviews[1] = Mailing_ManageForm()

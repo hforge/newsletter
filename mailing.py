@@ -27,7 +27,8 @@ from ikaaro.registry import register_document_type
 
 # Import from Newsletter
 from letter import MailingLetter
-from mailing_views import MailingView, MailingEdit
+from mailing_views import Mailing_View, Mailing_Edit
+from mailing_views import Mailing_SubscribeForm
 
 
 
@@ -45,8 +46,10 @@ class Mailing(Folder, Observable):
 
     class_views = ['view', 'edit', 'subscribe']
 
-    view = MailingView()
-    edit = MailingEdit()
+    # Views
+    view = Mailing_View()
+    edit = Mailing_Edit()
+    subscribe = Mailing_SubscribeForm()
 
 
     def get_document_types(self):
