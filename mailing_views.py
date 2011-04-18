@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # Import from itools
-from itools.core import merge_dicts
+from itools.core import freeze, merge_dicts
 from itools.database import PhraseQuery, AndQuery
 from itools.datatypes import Email
 from itools.gettext import MSG
@@ -109,13 +109,16 @@ class Mailing_Edit(DBResource_Edit):
 
 class Mailing_ManageForm(ManageForm):
 
-    def get_items(self, resource, context):
-        items = super(Mailing_ManageForm, self).get_items(resource, context)
-        # Filter out unsubscribed users
-        subscribed_users = list(resource.get_subscribed_users(
-                skip_unconfirmed=False))
-        return [user for user in items if user.name in subscribed_users]
+    table_columns = freeze(ManageForm.table_columns + [
+        ('grey_list', 'Unsubscribed')])
 
+
+    def get_item_value(self, resource, context, item, column):
+        if column == 'grey_list':
+            on_grey_list = item.name in resource.get_property('grey_list')
+            return MSG(u"Yes") if on_grey_list else MSG(u"No")
+        proxy = super(Mailing_ManageForm, self)
+        return proxy.get_item_value(resource, context, item, column)
 
 
 class Mailing_SubscribeForm(SubscribeForm):
