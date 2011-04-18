@@ -179,7 +179,7 @@ class MailingLetter(Folder):
         server = context.server
 
         # Users
-        users = self.parent.get_property('cc_list')
+        users = self.parent.get_subscribed_users()
         if not users:
             return
 
@@ -194,9 +194,9 @@ class MailingLetter(Folder):
 
         # Save the emails in the spool
         number = 0
-        for user in users:
-            user = context.root.get_user(user)
-            if user and not user.get_property('user_must_confirm'):
+        for username in users:
+            user = context.root.get_user(username)
+            if user:
                 number += 1
                 mail = user.get_property('email')
                 message = self._make_message(from_addr, mail, subject, text,
