@@ -55,14 +55,7 @@ class MailingLetter(Folder):
                                email=Email(source='metadata'))
     __fixed_handlers__ = ['html_body', 'txt_body']
 
-    class_views = ['view', 'edit_html', 'edit_txt', 'browse_content']
-
-    # XXX DELETE ME
-    #class_views = ['view', 'new_instance']
-    #               'edit_html', 'edit_text',
-    #               'browse_content?mode=list',
-    #               'send',
-    #               'view_stats']
+    class_views = ['view', 'edit', 'edit_html', 'edit_txt', 'browse_content']
 
     new_instance = MailingLetterNewInstance()
     view = MailingLetterView()

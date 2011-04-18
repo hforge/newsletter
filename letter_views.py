@@ -55,8 +55,6 @@ class MailingLetterNewInstance(NewInstance):
         child.metadata.set_property('title', title)
         # Ok
         goto = str(resource.get_pathto(child))
-        if self.goto_view:
-            goto = '%s/;%s' % (goto, self.goto_view)
         return context.come_back(messages.MSG_NEW_RESOURCE, goto=goto)
 
 
