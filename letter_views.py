@@ -79,15 +79,12 @@ class MailingLetterView(STLForm):
 
         # The data XXX handle the language
         html_resource = resource.get_resource('html_body')
-        prefix = resource.get_pathto(html_resource)
-        html_data = html_resource.get_html_data()
-        html_data = set_prefix(html_data, '%s/' % prefix)
         txt_data = resource.get_resource('txt_body').to_text()
 
         return {'subject': resource.get_title(),
                 'is_sent': resource.get_property('is_sent'),
                 'nb_users': nb_users,
-                'html_data': html_data,
+                'link_to_html': context.get_link(html_resource),
                 'txt_data': txt_data}
 
 

@@ -18,18 +18,19 @@
   <b>Number of Emails: </b> ${nb_users}<br/><br/>
 
   <form method="POST" stl:if="not is_sent">
-    <input type="submit" value="Send the newsletter"/>
+    <input class="button-ok" type="submit" value="Send the newsletter"/>
     <br/>
   </form>
 
   <h2>HTML Version</h2>
-  <div>
-    <div class="clear"/>
-    ${html_data}
-    <div class="clear"/>
-  </div>
+  <iframe src="${link_to_html}/;view"
+    width="630" height="800"
+    style="border:1px solid black"/>
 
   <h2>Text Version</h2>
+
+  <div style="border:1px solid black">
   <pre>${txt_data}</pre>
+  </div>
 
 </stl:block>
