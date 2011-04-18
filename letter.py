@@ -157,21 +157,19 @@ class MailingLetter(Folder):
 
 
     def _make_message(self, from_addr, to_addr, subject, text, html):
-
-        # Build the message
         message = MIMEMultipart('related')
         message['Subject'] = Header(subject, 'utf-8')
         message['Date'] = formatdate(localtime=True)
         message['From'] = from_addr
         message['To'] = to_addr
-
+        message['Precedence'] = 'bulk'
+        message['List-Unsubscribe'] = '<mailto:%s>' % from_addr
         message_html = MIMEText(html, 'html', _charset='utf-8')
         message_text = MIMEText(text, _charset='utf-8')
         message_alternative = MIMEMultipart('alternative')
         message.attach(message_alternative)
         message_alternative.attach(message_text)
         message_alternative.attach(message_html)
-
         return message
 
 
