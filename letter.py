@@ -34,7 +34,6 @@ from itools.web import get_context
 from ikaaro.file import File
 from ikaaro.folder import Folder
 from ikaaro.folder_views import GoToSpecificDocument
-from ikaaro.registry import register_resource_class
 
 # Import from Newsletter
 from mail import EmailResource
@@ -188,8 +187,3 @@ class MailingLetter(Folder):
         # Stats
         self.set_property('number', number)
         self.set_property('is_sent', True)
-
-
-
-# Register
-register_resource_class(MailingLetter)
