@@ -43,6 +43,7 @@ class Mailing_View(Folder_BrowseContent):
     table_columns = [
         ('checkbox', None),
         ('title', MSG(u'Title')),
+        ('email_subject', MSG(u'Newsletter subject')),
         ('is_sent', MSG(u'Sent ?')),
         ('mtime', MSG(u'Last Modified')),
         ('last_author', MSG(u'Last Author'))]

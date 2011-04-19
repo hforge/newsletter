@@ -76,7 +76,7 @@ class MailingLetter(EmailResource):
             banner = get_context().get_link(banner)
         namespace = {'page_uri': './;download',
                      'banner': banner,
-                     'title': kw['title']}
+                     'title': kw['email_subject']}
         template = root.get_resource('/ui/mailing/LetterTemplate.xml')
         handler = self.get_handler(language=default_language)
         handler.set_changed()
@@ -171,7 +171,7 @@ class MailingLetter(EmailResource):
 
         # Prepare the last infos
         from_addr = self.parent.get_property('sender')
-        subject = self.get_title().encode('utf-8')
+        subject = self.get_email_subject(context)
         text = self.get_email_text(context)
         html = self.get_email_html(context)
 

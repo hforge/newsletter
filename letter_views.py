@@ -27,7 +27,8 @@ from itools.web import ERROR, STLForm
 from itools.xml import XMLParser
 
 # Import from ikaaro
-from ikaaro.autoform import ImageSelectorWidget
+from ikaaro.autoform import ImageSelectorWidget, TextWidget
+from ikaaro.datatypes import Unicode
 from ikaaro.views_new import NewInstance
 from ikaaro.registry import get_resource_class
 from ikaaro import messages
@@ -36,9 +37,12 @@ from ikaaro import messages
 
 class MailingLetterNewInstance(NewInstance):
 
-    schema = merge_dicts(NewInstance.schema, banner=String)
-    widgets = NewInstance.widgets + [ImageSelectorWidget('banner',
-              title=MSG(u'You can choose a banner'))]
+    schema = merge_dicts(NewInstance.schema,
+        email_subject=Unicode,
+        banner=String)
+    widgets = NewInstance.widgets + [
+        TextWidget('email_subject', title=MSG(u'Email subject')),
+        ImageSelectorWidget('banner', title=MSG(u'You can choose a banner'))]
 
 
     def action(self, resource, context, form):
@@ -51,11 +55,12 @@ class MailingLetterNewInstance(NewInstance):
         prefix = container.get_pathto(resource)
         banner = prefix.resolve2(form['banner'])
         child = container.make_resource(form['name'], cls, banner=banner,
-                title=form['title'])
+                    email_subject=form['email_subject'])
         # Set properties
         language = container.get_edit_languages(context)[0]
-        title = Property(form['title'], lang=language)
-        child.metadata.set_property('title', title)
+        for key in ['title', 'email_subject']:
+            value = Property(form[key], lang=language)
+            child.metadata.set_property(key, value)
         # Ok
         goto = str(resource.get_pathto(child))
         return context.come_back(messages.MSG_NEW_RESOURCE, goto=goto)
@@ -77,6 +82,7 @@ class MailingLetterView(STLForm):
         txt_data = XMLParser(txt_data.replace('\n', '<br/>'))
         # Return namespace
         return {'title': resource.get_title(),
+                'email_subject': resource.get_email_subject(context),
                 'spool_size': context.server.get_spool_size(),
                 'nb_users': resource.parent.get_subscripters_nb(),
                 'is_sent': resource.get_property('is_sent'),

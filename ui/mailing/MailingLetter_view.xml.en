@@ -4,9 +4,13 @@
 <stl:block xmlns="http://www.w3.org/1999/xhtml"
            xmlns:stl="http://www.hforge.org/xml-namespaces/stl">
 
-  <h2>Newsletter '${title}'</h2>
+  <h2>${title}</h2>
 
   <table cellpadding="5" cellspacing="0">
+    <tr>
+      <th>Email subject</th>
+      <td>${email_subject}</td>
+    </tr>
     <tr>
       <th>State</th>
       <td>

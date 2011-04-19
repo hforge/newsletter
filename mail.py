@@ -33,11 +33,13 @@ class EmailResource_Edit(HTMLEditView):
 
     schema = {'timestamp': HTMLEditView.schema['timestamp'],
               'title': Multilingual,
+              'email_subject': Multilingual,
               'data': HTMLBody(multilingual=True,
                                parameters_schema={'lang': String}),
               'email_text': Multilingual}
     widgets = [
-        TextWidget('title', title=MSG(u'Email subject')),
+        TextWidget('title', title=MSG(u'Title')),
+        TextWidget('email_subject', title=MSG(u'Email subject')),
         MultilineWidget('email_text', title=MSG(u'Email body (Text Version)')),
         RTEWidget('data', title=MSG(u'Email body (HTML Version)')),
         timestamp_widget]
@@ -57,6 +59,7 @@ class EmailResource(WebPage):
     class_id = 'email'
     class_title = MSG(u'Email')
     class_schema = merge_dicts(WebPage.class_schema,
+                               email_subject=Multilingual(source='metadata'),
                                email_text=Multilingual(source='metadata'))
 
     class_views = ['edit', 'download']
@@ -64,8 +67,15 @@ class EmailResource(WebPage):
     edit = EmailResource_Edit()
     download = EmailResource_Download(title=MSG(u'View Email'))
 
+
+    def get_email_subject(self, context):
+        subject = self.get_property('email_subject')
+        return subject.encode('utf-8')
+
+
     def get_email_text(self, context):
-        return self.get_property('email_text')
+        data = self.get_property('email_text')
+        return data.encode('utf-8')
 
 
     def get_email_html(self, context, web_version=False):
