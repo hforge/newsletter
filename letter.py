@@ -34,6 +34,15 @@ from itools.web import get_context
 from mail import EmailResource
 from letter_views import MailingLetterNewInstance, MailingLetterView
 
+email_text_template = MSG("""
+To see this news in your browser, please follow this link:
+{newsletter_uri}
+======================================================
+{email_text}
+======================================================
+Click here to unsubscribe:
+{unsubscribe_uri}
+""")
 
 
 class MailingLetter(EmailResource):
@@ -77,36 +86,48 @@ class MailingLetter(EmailResource):
         self.set_property('email_text', u'Votre email', language='fr')
 
 
+    def get_newsletter_uri(self, context):
+        unsub_uri = context.get_link(self)
+        unsub_uri = str(context.uri.resolve(unsub_uri))
+        return '%s/;download' % unsub_uri
 
-    def _make_mail_body(self, context):
-        # URI to unsubscribe
+
+    def get_unsubscribe_uri(self, context):
         unsub_uri = context.get_link(self.parent)
         unsub_uri = str(context.uri.resolve(unsub_uri))
-        unsub_uri += '/;subscribe'
+        return '%s/;subscribe' % unsub_uri
 
-        # URI to view the page
-        page_uri = str(context.uri.resolve('.')) + '/;download'
 
-        # Make the txt part
-        txt_data = MSG(
-              u'To see this news in your browser, please follow this link:\n'
-                       ).gettext()
-        txt_data += page_uri + '\n'
-        txt_data += u'======================================================\n'
-        txt_data += self.get_property('email_text')
-        txt_data += u'\n\n'
-        txt_data += u'======================================================\n'
-        txt_data += MSG(u'Click here to unsubscribe\n').gettext()
-        txt_data += unsub_uri
-        txt_data = txt_data.encode('utf-8')
+    def get_email_text(self, context):
+        data = email_text_template.gettext(
+                   newsletter_uri=self.get_newsletter_uri(context),
+                   unsubscribe_uri=self.get_unsubscribe_uri(context),
+                   email_text=self.get_property('email_text'))
+        return data.encode('utf-8')
 
-        # Make the HTML part
-        header = MSG(u'Please click <a href="{page_uri}">here</a> '
-                     ).gettext(page_uri=page_uri)
-        header += MSG(u'to see this news on your browser').gettext()
-        header = HTMLParser(header.encode('utf-8'))
-        footer = MSG(u'Click <a href="{unsub_uri}">here</a> to unsubscribe'
-                     ).gettext(unsub_uri=unsub_uri)
+
+    def get_email_html(self, context, web_version=False):
+        header = []
+        if web_version is False:
+            header = MSG(u"""
+                <center>
+                  <span style="font-size:10px;font-weight:bold;
+                    font-family:Arial,Helvetica,sans-serif;">
+                    <a href="{page_uri}" target="_blank">Click here</a>
+                    to see this news on you browser
+                  </span>
+                </center>
+                """).gettext(page_uri=self.get_newsletter_uri(context))
+            header = HTMLParser(header.encode('utf-8'))
+        footer = MSG(u"""
+            <center>
+              <span style="font-size:10px;font-weight:bold;
+                font-family:Arial,Helvetica,sans-serif;">
+                <a href="{unsub_uri}" target="_blank">Click here</a>
+                to unsubscribe
+              </span>
+            </center>
+            """).gettext(unsub_uri=self.get_unsubscribe_uri(context))
         footer = HTMLParser(footer.encode('utf-8'))
 
         handler = self.handler
@@ -116,13 +137,11 @@ class MailingLetter(EmailResource):
                   + handler.events[body.start + 1:body.end]
                   + footer
                   + handler.events[body.end:])
-
         # Rewrite link with scheme and autority
         prefix = self.get_site_root().get_pathto(self)
         html_data = set_prefix(events, prefix='%s/' % prefix, uri=context.uri)
         html_data = stl(events=html_data, mode='xhtml')
-
-        return (txt_data, html_data)
+        return html_data
 
 
     def _make_message(self, from_addr, to_addr, subject, text, html):
@@ -156,7 +175,8 @@ class MailingLetter(EmailResource):
         # Prepare the last infos
         from_addr = self.parent.get_property('sender')
         subject = self.get_title().encode('utf-8')
-        text, html = self._make_mail_body(context)
+        text = self.get_email_text(context)
+        html = self.get_email_html(context)
 
         # Save the emails in the spool
         number = 0
@@ -171,7 +191,6 @@ class MailingLetter(EmailResource):
 
         # And send the messages
         server.flush_spool()
-
         # Stats
         self.set_property('number', number)
         self.set_property('is_sent', True)

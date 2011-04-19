@@ -15,12 +15,16 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+# Import from standard library
+import re
+
 # Import from itools
 from itools.core import merge_dicts
 from itools.csv import Property
-from itools.datatypes import String
+from itools.datatypes import String, XMLContent
 from itools.gettext import MSG
 from itools.web import STLForm
+from itools.xml import XMLParser
 
 # Import from ikaaro
 from ikaaro.autoform import ImageSelectorWidget
@@ -65,12 +69,19 @@ class MailingLetterView(STLForm):
     title = MSG(u'View')
 
     def get_namespace(self, resource, context):
+        # Render txt version as webmail
+        txt_data = resource.get_email_text(context)
+        txt_data = XMLContent.encode(txt_data)
+        txt_data = re.sub(r'(\A|\s)(http://(\w|\.|/|:|;|\?|=|%|&|-)+)',
+                          r'\1<a href="\2" target="_blank"> \2</a>', txt_data)
+        txt_data = XMLParser(txt_data.replace('\n', '<br/>'))
+        # Return namespace
         return {'title': resource.get_title(),
                 'spool_size': context.server.get_spool_size(),
                 'nb_users': resource.parent.get_subscripters_nb(),
                 'is_sent': resource.get_property('is_sent'),
                 'number': resource.get_property('number'),
-                'txt_data': resource.get_property('email_text')}
+                'txt_data': txt_data}
 
 
     def action(self, resource, context, form):

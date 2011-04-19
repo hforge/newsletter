@@ -35,13 +35,18 @@ class EmailResource_Edit(HTMLEditView):
               'data': HTMLBody(multilingual=True,
                                parameters_schema={'lang': String}),
               'email_text': Multilingual}
-    widgets = [rte_widget,
-               MultilineWidget('email_text', title=MSG(u'Text version')),
+    widgets = [MultilineWidget('email_text', title=MSG(u'Text version')),
+               rte_widget,
                timestamp_widget]
 
     def _get_schema(self, resource, context):
         return self.schema
 
+
+class EmailResource_Download(File_Download):
+
+    def get_bytes(self, resource, context):
+        return resource.get_email_html(context, web_version=True)
 
 
 class EmailResource(WebPage):
@@ -54,4 +59,11 @@ class EmailResource(WebPage):
     class_views = ['edit', 'download']
 
     edit = EmailResource_Edit()
-    download = File_Download(title=MSG(u'View Email'))
+    download = EmailResource_Download(title=MSG(u'View Email'))
+
+    def get_email_text(self, context):
+        return self.get_property('email_text')
+
+
+    def get_email_html(self, context, web_version=False):
+        return self.handler.to_str()
