@@ -65,24 +65,12 @@ class MailingLetterView(STLForm):
     title = MSG(u'View')
 
     def get_namespace(self, resource, context):
-
-        # nb_users
-        number = resource.get_property('number')
-        if number:
-            nb_users = MSG(u'Sent to {nb} E-Mails')
-            nb_users = nb_users.gettext(nb=number)
-        else:
-            nb_users =  MSG(u'There are {nb} E-Mails in Database')
-            nb_users = nb_users.gettext(
-                                nb=resource.parent.get_subscripters_nb())
-
-        txt_data = resource.get_property('email_text')
-
         return {'title': resource.get_title(),
                 'spool_size': context.server.get_spool_size(),
+                'nb_users': resource.parent.get_subscripters_nb(),
                 'is_sent': resource.get_property('is_sent'),
-                'nb_users': nb_users,
-                'txt_data': txt_data}
+                'number': resource.get_property('number'),
+                'txt_data': resource.get_property('email_text')}
 
 
     def action(self, resource, context, form):

@@ -6,30 +6,51 @@
 
   <h2>Newsletter '${title}'</h2>
 
-  <stl:inline stl:if="is_sent">
-    <b>State:</b> Already sent
-  </stl:inline>
-  <stl:inline stl:if="not is_sent">
-    <b>State:</b> Not sent
-  </stl:inline>
-  <br/>
-  <b>Number of Emails: </b> ${nb_users}<br/>
-  <b>Spool size: </b> ${spool_size}<br/><br/>
+  <table cellpadding="5" cellspacing="0">
+    <tr>
+      <th>State</th>
+      <td>
+        <stl:inline stl:if="is_sent">Already sent</stl:inline>
+        <stl:inline stl:if="not is_sent">Not sent</stl:inline>
+      </td>
+    </tr>
+    <tr>
+      <th>Spool size</th>
+      <td>${spool_size}</td>
+    </tr>
+    <tr>
+      <th>Number of Emails</th>
+      <td>
+        <stl:inline stl:if="not is_sent">
+         There are ${nb_users} E-mails in Database
+        </stl:inline>
+        <stl:inline stl:if="is_sent">
+         Sent to ${number} E-mails
+        </stl:inline>
+      </td>
+    </tr>
+    <tr stl:if="not is_sent">
+      <th>
+        Action
+      </th>
+      <td>
+        <form method="POST" stl:if="not is_sent">
+          <input class="button-ok" type="submit" value="Send the newsletter"/>
+        </form>
+      </td>
+    </tr>
+  </table>
 
-  <form method="POST" stl:if="not is_sent">
-    <input class="button-ok" type="submit" value="Send the newsletter"/>
-    <br/>
-  </form>
-
-  <h2>HTML Version</h2>
-  <iframe src="./;download"
-    width="630" height="800"
-    style="border:1px solid black"/>
 
   <h2>Text Version</h2>
 
-  <div style="border:1px solid black">
-  <pre>${txt_data}</pre>
+  <div style="border:1px solid black; width:620px;padding:5px">
+    ${txt_data}
   </div>
+
+  <h2>HTML Version</h2>
+    <iframe src="./;download"
+      width="630" height="800"
+      style="border:1px solid black"/>
 
 </stl:block>
