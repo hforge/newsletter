@@ -56,6 +56,7 @@ class Mailing_View(Folder_BrowseContent):
     table_columns = [
         ('checkbox', None),
         ('title', MSG(u'Title')),
+        ('is_sent', MSG(u'Sent ?')),
         ('mtime', MSG(u'Last Modified')),
         ('last_author', MSG(u'Last Author'))]
     table_actions = [ RemoveButton ]
@@ -91,6 +92,13 @@ class Mailing_View(Folder_BrowseContent):
             brain, item_resource = item
             href = '%s/' % context.get_link(item_resource)
             return brain.title, href
+        elif column == 'is_sent':
+            brain, item_resource = item
+            is_sent = item_resource.get_property('is_sent')
+            if is_sent:
+                nb_users = item_resource.get_property('number')
+                return MSG(u'Yes (To {x} users)').gettext(x=nb_users)
+            return MSG(u'No')
         proxy = super(Mailing_View, self)
         return proxy.get_item_value(resource, context, item, column)
 
