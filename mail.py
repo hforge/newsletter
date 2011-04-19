@@ -22,7 +22,7 @@ from itools.gettext import MSG
 
 # import from ikaaro
 from ikaaro.autoform import HTMLBody, rte_widget, timestamp_widget
-from ikaaro.autoform import MultilineWidget
+from ikaaro.autoform import MultilineWidget, TextWidget
 from ikaaro.datatypes import Multilingual
 from ikaaro.file_views import File_Download
 from ikaaro.webpage import WebPage, HTMLEditView
@@ -32,10 +32,12 @@ from ikaaro.webpage import WebPage, HTMLEditView
 class EmailResource_Edit(HTMLEditView):
 
     schema = {'timestamp': HTMLEditView.schema['timestamp'],
+              'title': Multilingual,
               'data': HTMLBody(multilingual=True,
                                parameters_schema={'lang': String}),
               'email_text': Multilingual}
-    widgets = [MultilineWidget('email_text', title=MSG(u'Text version')),
+    widgets = [TextWidget('title', title=MSG(u'Mail subject')),
+               MultilineWidget('email_text', title=MSG(u'Text version')),
                rte_widget,
                timestamp_widget]
 
