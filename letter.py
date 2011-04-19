@@ -37,8 +37,7 @@ from ikaaro.folder_views import GoToSpecificDocument
 from ikaaro.registry import register_resource_class
 
 # Import from Newsletter
-from html_data import HTMLData
-from txt_data import TXTData
+from mail import EmailResource
 from letter_views import MailingLetterNewInstance, MailingLetterView
 
 
@@ -53,18 +52,15 @@ class MailingLetter(Folder):
                                is_sent=Boolean(source='metadata'),
                                number=Integer(source='metadata'),
                                email=Email(source='metadata'))
-    __fixed_handlers__ = ['html_body', 'txt_body']
+    __fixed_handlers__ = ['mail']
 
-    class_views = ['view', 'edit', 'edit_html', 'edit_txt', 'browse_content']
+    class_views = ['view', 'edit', 'browse_content']
 
     new_instance = MailingLetterNewInstance()
     view = MailingLetterView()
-    edit_html = GoToSpecificDocument(specific_document='html_body/;edit',
-                                     title=MSG(u'Edit HTML'),
-                                     access='is_allowed_to_edit')
-    edit_txt =  GoToSpecificDocument(specific_document='txt_body',
-                                     title=MSG(u'Edit Text'),
-                                     access='is_allowed_to_edit')
+    edit = GoToSpecificDocument(specific_document='mail/;edit',
+                                title=MSG(u'Edit Mail'),
+                                access='is_allowed_to_edit')
 
 
     def init_resource(self, **kw):
@@ -82,14 +78,10 @@ class MailingLetter(Folder):
         template = self.get_root().get_resource(
                                    '/ui/mailing/LetterTemplate.xml')
         body = stl(template, namespace, mode='xhtml')
-        self.make_resource('html_body', HTMLData, body=body,
-                           language=default_language,
-                           title={'en': u'HTML Body',
-                                  'fr': u'Partie HTML'})
-        # TXT Version
-        self.make_resource('txt_body', TXTData,
-                           title={'en': u'Text body',
-                                  'fr': u'Partie texte'})
+        self.make_resource('mail', EmailResource, body=body,
+            email_text={'en': u'Your email', 'fr': u'Your mail'},
+            language=default_language,
+            title={'en': u'Email', 'fr': u'Email'})
 
 
     def get_document_types(self):
@@ -103,8 +95,8 @@ class MailingLetter(Folder):
         unsub_uri += '/;subscribe'
 
         # URI to view the page
-        html_body = self.get_resource('html_body')
-        page_uri = context.get_link(html_body)
+        mail = self.get_resource('mail')
+        page_uri = context.get_link(mail)
         page_uri = str(context.uri.resolve(page_uri)) + '/;view'
 
         # Make the txt part
@@ -113,7 +105,7 @@ class MailingLetter(Folder):
                        ).gettext()
         txt_data += page_uri + '\n'
         txt_data += u'======================================================\n'
-        txt_data += self.get_resource('txt_body').to_text()
+        txt_data += mail.get_property('email_text')
         txt_data += u'\n\n'
         txt_data += u'======================================================\n'
         txt_data += MSG(u'Click here to unsubscribe\n').gettext()
@@ -129,7 +121,7 @@ class MailingLetter(Folder):
                      ).gettext(unsub_uri=unsub_uri)
         footer = HTMLParser(footer.encode('utf-8'))
 
-        handler = html_body.handler
+        handler = mail.handler
         body = handler.get_body()
         events = (handler.events[:body.start + 1]
                   + header
@@ -138,7 +130,7 @@ class MailingLetter(Folder):
                   + handler.events[body.end:])
 
         # Rewrite link with scheme and autority
-        prefix = self.get_site_root().get_pathto(html_body)
+        prefix = self.get_site_root().get_pathto(mail)
         html_data = set_prefix(events, prefix='%s/' % prefix, uri=context.uri)
         html_data = stl(events=html_data, mode='xhtml')
 
