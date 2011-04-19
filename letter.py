@@ -72,24 +72,20 @@ class MailingLetter(Folder):
         banner = kw['banner']
 
         # HTML Version
+        default_language = self.get_site_root().get_default_language()
         if banner:
-            default_language = self.get_site_root().get_default_language()
             banner = self.parent.get_resource(banner)
-            namespace = {'page_uri': './;view',
-                         'banner': get_context().get_link(banner),
-                         'title': kw['title']}
-            template = self.get_root().get_resource(
-                                       '/ui/mailing/LetterTemplate.xml')
-            body = stl(template, namespace, mode='xhtml')
-            self.make_resource('html_body', HTMLData, body=body,
-                               language=default_language,
-                               title={'en': u'HTML Body',
-                                      'fr': u'Partie HTML'})
-        else:
-            self.make_resource('html_body', HTMLData,
-                               title={'en': u'HTML Body',
-                                      'fr': u'Partie HTML'})
-
+            banner = get_context().get_link(banner)
+        namespace = {'page_uri': './;view',
+                     'banner': banner,
+                     'title': kw['title']}
+        template = self.get_root().get_resource(
+                                   '/ui/mailing/LetterTemplate.xml')
+        body = stl(template, namespace, mode='xhtml')
+        self.make_resource('html_body', HTMLData, body=body,
+                           language=default_language,
+                           title={'en': u'HTML Body',
+                                  'fr': u'Partie HTML'})
         # TXT Version
         self.make_resource('txt_body', TXTData,
                            title={'en': u'Text body',
