@@ -169,9 +169,6 @@ class MailingLetter(EmailResource):
         if not users:
             return
 
-        # All object must be public
-        print self.get_links()
-
         # Prepare the last infos
         from_addr = self.parent.get_property('sender')
         subject = self.get_title().encode('utf-8')

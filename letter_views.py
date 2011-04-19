@@ -23,7 +23,7 @@ from itools.core import merge_dicts
 from itools.csv import Property
 from itools.datatypes import String, XMLContent
 from itools.gettext import MSG
-from itools.web import STLForm
+from itools.web import ERROR, STLForm
 from itools.xml import XMLParser
 
 # Import from ikaaro
@@ -88,8 +88,26 @@ class MailingLetterView(STLForm):
         # Sender OK ?
         sender = resource.parent.get_property('sender')
         if not sender:
-            context.message = MSG(u'Please configure the sender !')
+            context.message = ERROR(u'Please configure the sender !')
             return
-
+        # All object must be public
+        links = []
+        for link in resource.get_links():
+            link_resource = context.root.get_resource(link)
+            if link_resource.get_statename() != 'public':
+                links.append(
+                    {'href': context.get_link(link_resource),
+                     'title': link_resource.get_title()})
+        if links:
+            context.message = ERROR(u"""
+                Error, some resources used on newsletter are not public:<br/>
+                <stl:block stl:repeat="link links">
+                  <a href="${link/href}">${link/title}</a>
+                  <stl:inline stl:if="not repeat/link/end">,</stl:inline>
+                </stl:block>
+                <br/>Please fix it and resend the newsletter.
+                """, format='stl', links=links)
+            return
+        # Send the newsletter
         resource.send(context)
         context.message = MSG(u'Newsletter sent !')
