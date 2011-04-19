@@ -76,14 +76,11 @@ class MailingLetterView(STLForm):
             nb_users = nb_users.gettext(
                                 nb=resource.parent.get_subscripters_nb())
 
-        # The data XXX handle the language
-        mail = resource.get_resource('mail')
-        txt_data = mail.get_property('email_text')
+        txt_data = resource.get_property('email_text')
 
         return {'subject': resource.get_title(),
                 'is_sent': resource.get_property('is_sent'),
                 'nb_users': nb_users,
-                'link_to_html': context.get_link(mail),
                 'txt_data': txt_data}
 
 

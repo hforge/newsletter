@@ -30,61 +30,52 @@ from itools.html import HTMLParser
 from itools.stl import set_prefix, stl
 from itools.web import get_context
 
-# import from ikaaro
-from ikaaro.file import File
-from ikaaro.folder import Folder
-from ikaaro.folder_views import GoToSpecificDocument
-
 # Import from Newsletter
 from mail import EmailResource
 from letter_views import MailingLetterNewInstance, MailingLetterView
 
 
 
-class MailingLetter(Folder):
+class MailingLetter(EmailResource):
 
     class_id = 'mailing-letter'
     class_title = MSG(u'Mailing Letter')
     class_description = MSG(u'Send a newsletter to your customers or '
                             u'visitors ...')
-    class_schema = merge_dicts(Folder.class_schema,
+    class_schema = merge_dicts(EmailResource.class_schema,
                                is_sent=Boolean(source='metadata'),
                                number=Integer(source='metadata'),
                                email=Email(source='metadata'))
     __fixed_handlers__ = ['mail']
 
-    class_views = ['view', 'edit', 'browse_content']
+    class_views = ['view', 'edit', 'download']
 
     new_instance = MailingLetterNewInstance()
     view = MailingLetterView()
-    edit = GoToSpecificDocument(specific_document='mail/;edit',
-                                title=MSG(u'Edit Mail'),
-                                access='is_allowed_to_edit')
 
 
     def init_resource(self, **kw):
-        Folder.init_resource(self)
+        EmailResource.init_resource(self)
+        root = self.get_root()
         banner = kw['banner']
 
-        # HTML Version
+        ## HTML Version
         default_language = self.get_site_root().get_default_language()
+        default_language = 'en'
         if banner:
             banner = self.parent.get_resource(banner)
             banner = get_context().get_link(banner)
-        namespace = {'page_uri': './;view',
+        namespace = {'page_uri': './;download',
                      'banner': banner,
                      'title': kw['title']}
-        template = self.get_root().get_resource(
-                                   '/ui/mailing/LetterTemplate.xml')
-        body = stl(template, namespace, mode='xhtml')
-        self.make_resource('mail', EmailResource, body=body,
-            email_text={'en': u'Your email', 'fr': u'Your mail'},
-            language=default_language,
-            title={'en': u'Email', 'fr': u'Email'})
+        template = root.get_resource('/ui/mailing/LetterTemplate.xml')
+        handler = self.get_handler(language=default_language)
+        handler.set_changed()
+        handler.events = list(stl(template, namespace))
+        # TEXT Version
+        self.set_property('email_text', u'Your email', language='en')
+        self.set_property('email_text', u'Votre email', language='fr')
 
-
-    def get_document_types(self):
-        return [File]
 
 
     def _make_mail_body(self, context):
@@ -94,9 +85,7 @@ class MailingLetter(Folder):
         unsub_uri += '/;subscribe'
 
         # URI to view the page
-        mail = self.get_resource('mail')
-        page_uri = context.get_link(mail)
-        page_uri = str(context.uri.resolve(page_uri)) + '/;view'
+        page_uri = str(context.uri.resolve('.')) + '/;download'
 
         # Make the txt part
         txt_data = MSG(
@@ -104,7 +93,7 @@ class MailingLetter(Folder):
                        ).gettext()
         txt_data += page_uri + '\n'
         txt_data += u'======================================================\n'
-        txt_data += mail.get_property('email_text')
+        txt_data += self.get_property('email_text')
         txt_data += u'\n\n'
         txt_data += u'======================================================\n'
         txt_data += MSG(u'Click here to unsubscribe\n').gettext()
@@ -120,7 +109,7 @@ class MailingLetter(Folder):
                      ).gettext(unsub_uri=unsub_uri)
         footer = HTMLParser(footer.encode('utf-8'))
 
-        handler = mail.handler
+        handler = self.handler
         body = handler.get_body()
         events = (handler.events[:body.start + 1]
                   + header
@@ -129,7 +118,7 @@ class MailingLetter(Folder):
                   + handler.events[body.end:])
 
         # Rewrite link with scheme and autority
-        prefix = self.get_site_root().get_pathto(mail)
+        prefix = self.get_site_root().get_pathto(self)
         html_data = set_prefix(events, prefix='%s/' % prefix, uri=context.uri)
         html_data = stl(events=html_data, mode='xhtml')
 
@@ -162,8 +151,7 @@ class MailingLetter(Folder):
             return
 
         # All object must be public
-        for object in self.get_resources():
-            object.set_property('state', 'public')
+        print self.get_links()
 
         # Prepare the last infos
         from_addr = self.parent.get_property('sender')

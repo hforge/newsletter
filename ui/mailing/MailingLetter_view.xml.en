@@ -23,7 +23,7 @@
   </form>
 
   <h2>HTML Version</h2>
-  <iframe src="${link_to_html}/;view"
+  <iframe src="./;download"
     width="630" height="800"
     style="border:1px solid black"/>
 

@@ -51,7 +51,7 @@ class EmailResource(WebPage):
     class_schema = merge_dicts(WebPage.class_schema,
                                email_text=Multilingual(source='metadata'))
 
-    class_views = ['edit', 'view']
+    class_views = ['edit', 'download']
 
     edit = EmailResource_Edit()
-    view = File_Download(title=MSG(u'View Email'))
+    download = File_Download(title=MSG(u'View Email'))
