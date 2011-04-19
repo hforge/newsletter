@@ -21,7 +21,7 @@ from itools.datatypes import String
 from itools.gettext import MSG
 
 # import from ikaaro
-from ikaaro.autoform import HTMLBody, rte_widget, timestamp_widget
+from ikaaro.autoform import HTMLBody, RTEWidget, timestamp_widget
 from ikaaro.autoform import MultilineWidget, TextWidget
 from ikaaro.datatypes import Multilingual
 from ikaaro.file_views import File_Download
@@ -36,10 +36,11 @@ class EmailResource_Edit(HTMLEditView):
               'data': HTMLBody(multilingual=True,
                                parameters_schema={'lang': String}),
               'email_text': Multilingual}
-    widgets = [TextWidget('title', title=MSG(u'Mail subject')),
-               MultilineWidget('email_text', title=MSG(u'Text version')),
-               rte_widget,
-               timestamp_widget]
+    widgets = [
+        TextWidget('title', title=MSG(u'Email subject')),
+        MultilineWidget('email_text', title=MSG(u'Email body (Text Version)')),
+        RTEWidget('data', title=MSG(u'Email body (HTML Version)')),
+        timestamp_widget]
 
     def _get_schema(self, resource, context):
         return self.schema
