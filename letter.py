@@ -28,7 +28,6 @@ from itools.datatypes import Boolean, Integer, Email
 from itools.gettext import MSG
 from itools.html import HTMLParser
 from itools.stl import set_prefix, stl
-from itools.web import get_context
 
 # Import from Newsletter
 from mail import EmailResource
@@ -61,30 +60,6 @@ class MailingLetter(EmailResource):
 
     new_instance = MailingLetterNewInstance()
     view = MailingLetterView()
-
-
-    def init_resource(self, **kw):
-        EmailResource.init_resource(self)
-        root = self.get_root()
-        banner = kw['banner']
-
-        ## HTML Version
-        default_language = self.get_site_root().get_default_language()
-        default_language = 'en'
-        if banner:
-            banner = self.parent.get_resource(banner)
-            banner = get_context().get_link(banner)
-        namespace = {'page_uri': './;download',
-                     'banner': banner,
-                     'title': kw['email_subject']}
-        template = root.get_resource('/ui/mailing/LetterTemplate.xml')
-        handler = self.get_handler(language=default_language)
-        handler.set_changed()
-        handler.events = list(stl(template, namespace))
-        # TEXT Version
-        self.set_property('email_text', u'Your email', language='en')
-        self.set_property('email_text', u'Votre email', language='fr')
-
 
     def get_newsletter_uri(self, context):
         unsub_uri = context.get_link(self)

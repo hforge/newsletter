@@ -23,6 +23,7 @@ from itools.core import merge_dicts
 from itools.csv import Property
 from itools.datatypes import String, XMLContent
 from itools.gettext import MSG
+from itools.stl import stl
 from itools.web import ERROR, STLForm
 from itools.xml import XMLParser
 
@@ -47,6 +48,7 @@ class MailingLetterNewInstance(NewInstance):
 
     def action(self, resource, context, form):
         # Get the container
+        root = resource.get_root()
         container = form['container']
         # Make the resource
         class_id = context.query['type']
@@ -54,13 +56,29 @@ class MailingLetterNewInstance(NewInstance):
         # Banner relative to here
         prefix = container.get_pathto(resource)
         banner = prefix.resolve2(form['banner'])
-        child = container.make_resource(form['name'], cls, banner=banner,
-                    email_subject=form['email_subject'])
+        child = container.make_resource(form['name'], cls)
+
         # Set properties
         language = container.get_edit_languages(context)[0]
         for key in ['title', 'email_subject']:
             value = Property(form[key], lang=language)
             child.metadata.set_property(key, value)
+
+        # Build HTML template
+        if banner:
+            banner = resource.get_resource(banner)
+            banner = context.get_link(banner)
+        namespace = {'page_uri': './;download',
+                     'banner': banner,
+                     'title': form['email_subject']}
+        template = root.get_resource('/ui/mailing/LetterTemplate.xml')
+        handler = child.get_handler(language=language)
+        handler.set_changed()
+        handler.events = list(stl(template, namespace))
+        # Build Text template
+        txt = MSG(u'Type your text email here').gettext(language=language)
+        value = Property(txt, lang=language)
+        child.metadata.set_property('email_text', value)
         # Ok
         goto = str(resource.get_pathto(child))
         return context.come_back(messages.MSG_NEW_RESOURCE, goto=goto)
