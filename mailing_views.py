@@ -28,30 +28,17 @@ from ikaaro.cc import SubscribeForm, ManageForm
 from ikaaro.folder_views import Folder_BrowseContent
 from ikaaro.resource_views import DBResource_Edit
 from ikaaro.utils import get_base_path_query
-from ikaaro.views import ContextMenu
-
-
-class Mailing_Menu(ContextMenu):
-    title = MSG(u'Menu')
-
-
-    def get_items(self):
-        path = self.context.get_link(self.resource)
-        return [ {'title': MSG(u'Create a newsletter'),
-                  'href': '%s/;new_resource?type=mailing-letter' % path} ]
-
 
 
 class Mailing_View(Folder_BrowseContent):
+
     access = 'is_admin'
     title = MSG(u'View')
 
-    template = '/ui/mailing/Mailing_view.xml'
     search_template = None
-    context_menus = [Mailing_Menu()]
 
     # Table
-    batch_msg1 = MSG(u"There is 1 newsletter.") # FIXME Use plural forms
+    batch_msg1 = MSG(u"There is 1 newsletter.")
     batch_msg2 = MSG(u"There are {n} newsletters.")
     table_columns = [
         ('checkbox', None),
@@ -59,31 +46,13 @@ class Mailing_View(Folder_BrowseContent):
         ('is_sent', MSG(u'Sent ?')),
         ('mtime', MSG(u'Last Modified')),
         ('last_author', MSG(u'Last Author'))]
-    table_actions = [ RemoveButton ]
-
-
-    def get_namespace(self, resource, context):
-        proxy = super(Mailing_View, self)
-        namespace = proxy.get_namespace(resource, context)
-        namespace['spool_size'] = context.server.get_spool_size()
-        return namespace
+    table_actions = [RemoveButton]
 
 
     def get_items(self, resource, context, *args):
-        # Query
-        args = list(args)
-
-        # Search in subtree
         path = resource.get_canonical_path()
-        query = get_base_path_query(str(path))
-        args.append(query)
-
-        # Filter by type
-        args.append(PhraseQuery('format', 'mailing-letter'))
-
-        # Ok
-        query = AndQuery(*args)
-
+        query = AndQuery(get_base_path_query(str(path)),
+                         PhraseQuery('format', 'mailing-letter'))
         return context.root.search(query)
 
 
@@ -105,6 +74,7 @@ class Mailing_View(Folder_BrowseContent):
 
 
 class Mailing_Edit(DBResource_Edit):
+
     access = 'is_admin'
     title = MSG(u'Configure')
 
@@ -130,5 +100,6 @@ class Mailing_ManageForm(ManageForm):
 
 
 class Mailing_SubscribeForm(SubscribeForm):
+
     subviews = SubscribeForm.subviews[:]
     subviews[1] = Mailing_ManageForm()

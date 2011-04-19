@@ -78,7 +78,8 @@ class MailingLetterView(STLForm):
 
         txt_data = resource.get_property('email_text')
 
-        return {'subject': resource.get_title(),
+        return {'title': resource.get_title(),
+                'spool_size': context.server.get_spool_size(),
                 'is_sent': resource.get_property('is_sent'),
                 'nb_users': nb_users,
                 'txt_data': txt_data}
@@ -93,4 +94,3 @@ class MailingLetterView(STLForm):
 
         resource.send(context)
         context.message = MSG(u'Newsletter sent !')
-

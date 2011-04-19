@@ -4,10 +4,8 @@
 <stl:block xmlns="http://www.w3.org/1999/xhtml"
            xmlns:stl="http://www.hforge.org/xml-namespaces/stl">
 
-  <h2>
-    Informations
-  </h2>
-  <b>Subject: </b> ${subject}<br/>
+  <h2>Newsletter '${title}'</h2>
+
   <stl:inline stl:if="is_sent">
     <b>State:</b> Already sent
   </stl:inline>
@@ -15,7 +13,8 @@
     <b>State:</b> Not sent
   </stl:inline>
   <br/>
-  <b>Number of Emails: </b> ${nb_users}<br/><br/>
+  <b>Number of Emails: </b> ${nb_users}<br/>
+  <b>Spool size: </b> ${spool_size}<br/><br/>
 
   <form method="POST" stl:if="not is_sent">
     <input class="button-ok" type="submit" value="Send the newsletter"/>

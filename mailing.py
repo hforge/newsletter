@@ -23,6 +23,7 @@ from itools.gettext import MSG
 # import from ikaaro
 from ikaaro.cc import Observable
 from ikaaro.folder import Folder
+from ikaaro.folder_views import Folder_NewResource
 from ikaaro.registry import register_document_type
 
 # Import from Newsletter
@@ -44,12 +45,14 @@ class Mailing(Folder, Observable):
                                sender=Email(source='metadata'),
                                grey_list=Tokens(source='metadata'))
 
-    class_views = ['view', 'edit', 'subscribe']
+    class_views = ['view', 'new_resource?type=mailing-letter',
+                   'edit', 'subscribe']
 
     # Views
     view = Mailing_View()
     edit = Mailing_Edit()
     subscribe = Mailing_SubscribeForm()
+    new_resource = Folder_NewResource(title=MSG(u'Add a newsletter'))
 
 
     def get_document_types(self):
