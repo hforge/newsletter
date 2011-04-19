@@ -1,18 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:stl="http://www.hforge.org/xml-namespaces/stl">
   <head>
     <meta content="application/xhtml+xml; charset=utf-8"
       http-equiv="Content-Type"/>
     <title></title>
   </head>
   <body>
-    <div style="text-align:center">
-      <a href="${page_uri}"><img src="${banner}/;download"/></a>
-    </div><br/>
-    <h2>${title}</h2><br/>
-    Finish me, ...
+  <center>
+  <table width="100%" border="0" cellspacing="0"
+    cellpadding="10" bgcolor="#cccccc">
+    <tr>
+      <td>
+        <table border="0" cellpadding="10" align="center"
+        cellspacing="0" width="600" bgcolor="#ffffff"
+         style="font-family:Arial, Helvetica, sans-serif; color: #5b656b; font-size: 12px;">
+          <tr>
+            <td width="600" height="79">
+              <a href="${page_uri}" stl:if="banner">
+                <img src="${banner}/;download"/>
+              </a>
+            </td>
+          </tr>
+          <tr>
+            <td bgcolor="#053d64">
+              <span style="font-size: 15px; font-weight: bold; color: #ffffff; font-family:Arial, Helvetica, sans-serif;">
+                ${title}
+              </span>
+            </td>
+          </tr>
+          <tr>
+            <td style="color: #000;padding: 10px;">
+              Add your content here.<br/>
+              Add your content here.
+            </td>
+          </tr>
+          <tr>
+            <td bgcolor="#015289">
+              <span style="font-size: 10px; font-weight: bold; color: #ffffff; font-family:Arial, Helvetica, sans-serif;">
+                Newsletter www.example.com
+              </span>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+  </center>
   </body>
 </html>
-
