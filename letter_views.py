@@ -136,23 +136,36 @@ class MailingLetterView(STLForm):
         if resource.get_statename() != 'public':
             context.message = ERROR(u'Error, this newsletter must be public !')
             return
-        # All object must be public
-        links = []
+        # All object must be public or exist
+        not_public_links = []
+        broken_links = []
         for link in resource.get_links():
-            link_resource = context.root.get_resource(link)
-            if link_resource.get_statename() != 'public':
-                links.append(
+            link_resource = context.root.get_resource(link, soft=True)
+            if link_resource is None:
+                broken_links.append(link)
+            elif link_resource.get_statename() != 'public':
+                not_public_links.append(
                     {'href': context.get_link(link_resource),
                      'title': link_resource.get_title()})
-        if links:
+        if not_public_links or broken_links:
             context.message = ERROR(u"""
-                Error, some resources used on newsletter are not public:<br/>
-                <stl:block stl:repeat="link links">
-                  <a href="${link/href}">${link/title}</a>
-                  <stl:inline stl:if="not repeat/link/end">,</stl:inline>
+                <stl:block stl:if="links">
+                    Error, some resources used on newsletter are not public:<br/>
+                    <stl:block stl:repeat="link links">
+                      <a href="${link/href}">${link/title}</a>
+                      <stl:inline stl:if="not repeat/link/end">,</stl:inline>
+                    </stl:block>
+                </stl:block>
+                <stl:block stl:if="broken_links">
+                    <stl:inline stl:if="links"><br/></stl:inline>
+                    Some links are broken:<br/>
+                    <stl:block stl:repeat="link broken_links">
+                      ${link}<stl:inline stl:if="not repeat/link/end">,</stl:inline>
+                    </stl:block>
                 </stl:block>
                 <br/>Please fix it and resend the newsletter.
-                """, format='stl', links=links)
+                """, format='stl', links=not_public_links,
+                broken_links=broken_links)
             return
         # Send the newsletter
         resource.send(context)
