@@ -61,6 +61,10 @@ class MailingLetter(EmailResource):
     new_instance = MailingLetterNewInstance()
     view = MailingLetterView()
 
+    def init_resource(self, **kw):
+        self.set_property('state', 'public')
+
+
     def get_newsletter_uri(self, context):
         unsub_uri = context.get_link(self)
         unsub_uri = str(context.uri.resolve(unsub_uri))

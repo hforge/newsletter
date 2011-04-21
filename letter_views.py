@@ -114,6 +114,10 @@ class MailingLetterView(STLForm):
         if not sender:
             context.message = ERROR(u'Please configure the sender !')
             return
+        # Newsletter must be public
+        if resource.get_statename() != 'public':
+            context.message = ERROR(u'Error, this newsletter must be public !')
+            return
         # All object must be public
         links = []
         for link in resource.get_links():
