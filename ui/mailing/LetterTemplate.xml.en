@@ -11,12 +11,12 @@
   <body>
   <center>
   <table width="100%" border="0" cellspacing="0"
-    cellpadding="10" bgcolor="#cccccc">
+    cellpadding="10" bgcolor="#ffffff">
     <tr>
       <td>
         <table border="0" cellpadding="10" align="center"
         cellspacing="0" width="600" bgcolor="#ffffff"
-         style="font-family:Arial, Helvetica, sans-serif; color: #5b656b; font-size: 12px;">
+         style="font-family:Arial, Helvetica, sans-serif; color: #5b656b; font-size: 12px; border:1px solid #5b656b;">
           <tr>
             <td width="600" height="79">
               <a href="${page_uri}" stl:if="banner">
@@ -32,7 +32,7 @@
             </td>
           </tr>
           <tr>
-            <td style="color: #000;padding: 10px;">
+            <td style="color: #000;padding: 10px;" bgcolor="#eeeeee">
               Add your content here.<br/>
               Add your content here.
             </td>
