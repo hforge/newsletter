@@ -23,11 +23,13 @@ from itools.core import merge_dicts
 from itools.csv import Property
 from itools.datatypes import String, XMLContent
 from itools.gettext import MSG
+from itools.uri import get_reference
 from itools.stl import stl
-from itools.web import ERROR, STLForm
+from itools.web import get_context, ERROR, STLForm
 from itools.xml import XMLParser
 
 # Import from ikaaro
+from ikaaro.file import Image
 from ikaaro.autoform import ImageSelectorWidget, TextWidget
 from ikaaro.datatypes import Unicode
 from ikaaro.views_new import NewInstance
@@ -35,12 +37,28 @@ from ikaaro.registry import get_resource_class
 from ikaaro import messages
 
 
+class ImagePathDataType(String):
+
+    @staticmethod
+    def is_valid(value):
+        here = get_context().resource
+        try:
+            ref = get_reference(value)
+            if not ref.scheme:
+                resource = here.get_resource(ref.path, soft=True)
+                if resource and isinstance(resource, Image):
+                    return True
+        except Exception:
+            return False
+        return False
+
+
 
 class MailingLetterNewInstance(NewInstance):
 
     schema = merge_dicts(NewInstance.schema,
         email_subject=Unicode(mandatory=True),
-        banner=String)
+        banner=ImagePathDataType)
     widgets = NewInstance.widgets + [
         TextWidget('email_subject', title=MSG(u'Email subject')),
         ImageSelectorWidget('banner', title=MSG(u'You can choose a banner'))]
