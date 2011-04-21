@@ -39,7 +39,7 @@ from ikaaro import messages
 class MailingLetterNewInstance(NewInstance):
 
     schema = merge_dicts(NewInstance.schema,
-        email_subject=Unicode,
+        email_subject=Unicode(mandatory=True),
         banner=String)
     widgets = NewInstance.widgets + [
         TextWidget('email_subject', title=MSG(u'Email subject')),

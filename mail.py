@@ -19,7 +19,7 @@
 from itools.core import merge_dicts
 from itools.datatypes import String
 from itools.gettext import MSG
-from itools.xml import START_ELEMENT, END_ELEMENT, COMMENT
+from itools.xml import START_ELEMENT
 
 # import from ikaaro
 from ikaaro.autoform import HTMLBody, RTEWidget, timestamp_widget
@@ -82,7 +82,7 @@ class EmailResource_Edit(HTMLEditView):
 
     schema = {'timestamp': HTMLEditView.schema['timestamp'],
               'title': Multilingual,
-              'email_subject': Multilingual,
+              'email_subject': Multilingual(mandatory=True),
               'data': EmailHTMLBody(multilingual=True,
                                parameters_schema={'lang': String}),
               'email_text': Multilingual}
