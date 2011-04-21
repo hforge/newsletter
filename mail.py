@@ -19,6 +19,7 @@
 from itools.core import merge_dicts
 from itools.datatypes import String
 from itools.gettext import MSG
+from itools.xml import START_ELEMENT, END_ELEMENT, COMMENT
 
 # import from ikaaro
 from ikaaro.autoform import HTMLBody, RTEWidget, timestamp_widget
@@ -28,13 +29,61 @@ from ikaaro.file_views import File_Download
 from ikaaro.webpage import WebPage, HTMLEditView
 
 
+def rewrite_css_to_attribute(stream):
+    """
+    Replace for table and td
+    style="width=xxx" by width="xxx"
+    style="height=xxx" by height="xxx"
+    style="background-color=xxx" by bgcolor="xxx"
+    style="text-align=xxx" by align="xxx"
+    """
+    style_map = {'width': 'width',
+                 'height': 'height',
+                 'background-color': 'bgcolor',
+                 'text-align': 'align'}
+
+    for event in stream:
+        type, value, line = event
+        if type == START_ELEMENT:
+            tag_uri, tag_name, _attributes = value
+            if tag_name not in ('table', 'td'):
+                yield event
+                continue
+            # Rewrite attributes
+            attributes = _attributes.copy()
+            style = attributes.get((None, 'style'), None)
+            if not style:
+                # Do nothing
+                yield event
+                continue
+
+            for item in style.split(';'):
+                try:
+                    key, value = item.split(':')
+                except ValueError:
+                    continue
+                key = key.strip()
+                if key in style_map:
+                    attributes[(None, style_map[key])] = value.strip()
+            yield type, (tag_uri, tag_name, attributes), line
+        else:
+            yield event
+
+
+class EmailHTMLBody(HTMLBody):
+
+    def decode(cls, data):
+        events = super(EmailHTMLBody, cls).decode(data)
+        return list(rewrite_css_to_attribute(events))
+
+
 
 class EmailResource_Edit(HTMLEditView):
 
     schema = {'timestamp': HTMLEditView.schema['timestamp'],
               'title': Multilingual,
               'email_subject': Multilingual,
-              'data': HTMLBody(multilingual=True,
+              'data': EmailHTMLBody(multilingual=True,
                                parameters_schema={'lang': String}),
               'email_text': Multilingual}
     widgets = [
@@ -46,6 +95,7 @@ class EmailResource_Edit(HTMLEditView):
 
     def _get_schema(self, resource, context):
         return self.schema
+
 
 
 class EmailResource_Download(File_Download):
