@@ -67,7 +67,7 @@ class MailingLetterNewInstance(NewInstance):
         # Build HTML template
         if banner:
             banner = resource.get_resource(banner)
-            banner = context.get_link(banner)
+            banner = child.get_pathto(banner)
         namespace = {'page_uri': './;download',
                      'banner': banner,
                      'title': form['email_subject']}
