@@ -61,7 +61,7 @@ class Mailing_View(Folder_BrowseContent):
         if column == 'title':
             brain, item_resource = item
             href = '%s/' % context.get_link(item_resource)
-            return brain.title, href
+            return item_resource.get_title(), href
         elif column == 'is_sent':
             brain, item_resource = item
             is_sent = item_resource.get_property('is_sent')
