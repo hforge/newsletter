@@ -39,7 +39,7 @@
       </th>
       <td>
         <form method="POST" stl:if="not is_sent">
-          <input class="button-ok" type="submit" value="Send the newsletter"/>
+          <button type="submit" class="button-ok">Send the newsletter</button>
         </form>
       </td>
     </tr>
